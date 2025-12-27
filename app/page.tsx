@@ -54,66 +54,85 @@ export default function Home() {
             <p className="about-text">
               Integramos la física de los armónicos (Handpan) con la <strong>Terapia Floral de Precisión</strong>, creando una sinergia metodológica que aborda tanto el bloqueo vibracional como el desequilibrio emocional.
             </p>
-            <Link href="/servicios" className="btn btn-outline">
-              Conocer nuestros Protocolos de Armonización
-            </Link>
+            <div className="text-center mt-4">
+              <Link href="/servicios" className="btn btn-outline">
+                Conocer nuestros Protocolos de Armonización
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Science & Well-being (Blog Feed) */}
-      <section className="science-section section-padding bg-light">
-        <div className="container">
-          <h2 className="section-title text-center">Ciencia y Bienestar</h2>
-          <p className="section-subtitle text-center mb-5">
-            Artículos para entender la biología de la sintonía personal.
-          </p>
+      <style jsx global>{`
+        .about-content {
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: center;
+        }
+        .about-text {
+          margin-bottom: 1.5rem;
+          font-size: 1.1rem;
+          line-height: 1.8;
+          color: var(--foreground);
+        }
+        .mt-4 { margin-top: 2rem; }
+      `}</style>
+    </div >
+      </section >
 
-          <div className="blog-grid-home">
-            {/* We manually link the key pillars to ensure authority appearance */}
-            <article className="blog-card-home">
-              <h3>Disonancia y Armonía</h3>
-              <p>Cómo el estrés altera tu frecuencia física y cómo el sonido la resetea.</p>
-              <Link href="/blog/disonancia-y-armonia" className="read-more">Leer artículo &rarr;</Link>
-            </article>
-            <article className="blog-card-home">
-              <h3>Entornos Saludables</h3>
-              <p>Arquitectura vs. Entorno: La importancia de armonizar los espacios que habitamos.</p>
-              <Link href="/blog/tu-hogar-como-refugio" className="read-more">Leer artículo &rarr;</Link>
-            </article>
-            <article className="blog-card-home">
-              <h3>Huellas en Calma</h3>
-              <p>Terapia floral y vibracional aplicada al bienestar y comportamiento animal.</p>
-              <Link href="/blog/huellas-en-calma" className="read-more">Leer artículo &rarr;</Link>
-            </article>
-          </div>
-          <div className="text-center mt-5">
-            <Link href="/blog" className="btn btn-primary">Ver Biblioteca Completa</Link>
-          </div>
+    {/* Science & Well-being (Blog Feed) */ }
+    < section className = "science-section section-padding bg-light" >
+      <div className="container">
+        <h2 className="section-title text-center">Ciencia y Bienestar</h2>
+        <p className="section-subtitle text-center mb-5">
+          Artículos para entender la biología de la sintonía personal.
+        </p>
+
+        <div className="blog-grid-home">
+          {/* We manually link the key pillars to ensure authority appearance */}
+          <article className="blog-card-home">
+            <h3>Disonancia y Armonía</h3>
+            <p>Cómo el estrés altera tu frecuencia física y cómo el sonido la resetea.</p>
+            <Link href="/blog/disonancia-y-armonia" className="read-more">Leer artículo &rarr;</Link>
+          </article>
+          <article className="blog-card-home">
+            <h3>Entornos Saludables</h3>
+            <p>Arquitectura vs. Entorno: La importancia de armonizar los espacios que habitamos.</p>
+            <Link href="/blog/tu-hogar-como-refugio" className="read-more">Leer artículo &rarr;</Link>
+          </article>
+          <article className="blog-card-home">
+            <h3>Huellas en Calma</h3>
+            <p>Terapia floral y vibracional aplicada al bienestar y comportamiento animal.</p>
+            <Link href="/blog/huellas-en-calma" className="read-more">Leer artículo &rarr;</Link>
+          </article>
         </div>
-
-      </section>
-
-      {/* Introduction / Storytelling */}
-      <section className="section-intro container">
-        <div className="intro-text">
-          <h2>Sanación Integral: Ciencia y Esencia</h2>
-          <p>
-            Nuestra base de conocimiento culminó en una formación académica rigurosa,
-            donde contamos con tres especializaciones de grado: <strong>Guitarra, Educación Musical Inicial y de Adultos</strong>.
-            Esta base técnica sólida es el cimiento sobre el que construimos nuestra propuesta.
-          </p>
-          <p>
-            Sin embargo, la búsqueda de integralidad nos llevó más allá. Integramos disciplinas certificadas como <strong>Yoga, Reiki,
-              Terapia con Flores de Bach y Gemoterapia</strong>. En &quot;La Magia de los Vientos&quot;, fusionamos la precisión
-            de la música académica con la intuición de la sanación vibracional para ofrecerte una experiencia transformadora.
-          </p>
+        <div className="text-center mt-5">
+          <Link href="/blog" className="btn btn-primary">Ver Biblioteca Completa</Link>
         </div>
-      </section>
+      </div>
 
-      <LeadMagnet />
+      </section >
 
-      {/* Pillars Grid */}
+    {/* Introduction / Storytelling */ }
+    < section className = "section-intro container" >
+      <div className="intro-text">
+        <h2>Sanación Integral: Ciencia y Esencia</h2>
+        <p>
+          Nuestra base de conocimiento culminó en una formación académica rigurosa,
+          donde contamos con tres especializaciones de grado: <strong>Guitarra, Educación Musical Inicial y de Adultos</strong>.
+          Esta base técnica sólida es el cimiento sobre el que construimos nuestra propuesta.
+        </p>
+        <p>
+          Sin embargo, la búsqueda de integralidad nos llevó más allá. Integramos disciplinas certificadas como <strong>Yoga, Reiki,
+            Terapia con Flores de Bach y Gemoterapia</strong>. En &quot;La Magia de los Vientos&quot;, fusionamos la precisión
+          de la música académica con la intuición de la sanación vibracional para ofrecerte una experiencia transformadora.
+        </p>
+      </div>
+      </section >
+
+    <LeadMagnet />
+
+  {/* Pillars Grid */ }
       <section className="section-pillars container">
         <h2 className="section-title">Nuestros Pilares</h2>
         <div className="pillars-grid">

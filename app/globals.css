@@ -95,6 +95,22 @@ a {
   background-color: var(--color-secondary-dark);
 }
 
+.btn-secondary:hover {
+  background-color: var(--color-secondary-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
