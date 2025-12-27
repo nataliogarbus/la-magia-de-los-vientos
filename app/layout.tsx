@@ -6,6 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ["latin"], variable: '--font-outfit' });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://lamagiadelosvientos.com'),
   title: "La Magia de los Vientos | Centro de Armonización Vibracional",
   description: "Metodología clínica de bienestar que integra Frecuencia Sonora y Terapia Floral. Especialistas en estrés, entornos y bienestar animal.",
   keywords: ["Armonización Sonora", "Terapia Floral", "Bienestar Corporativo", "Handpan", "Flores de Bach", "Musicoterapia", "Relax"],

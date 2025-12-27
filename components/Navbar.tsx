@@ -33,6 +33,7 @@ export default function Navbar() {
         <ul className={`nav-links ${isOpen ? 'active' : ''}`}>
           <li><Link href="/" onClick={() => setIsOpen(false)}>Inicio</Link></li>
           <li><Link href="/servicios" onClick={() => setIsOpen(false)}>Armonización</Link></li>
+          <li><Link href="/blog" onClick={() => setIsOpen(false)}>Blog</Link></li>
           <li><Link href="/multimedia" onClick={() => setIsOpen(false)}>Sonidos</Link></li>
           <li><Link href="/reservas" onClick={() => setIsOpen(false)} className="btn btn-primary btn-sm">Reserva tu Turno</Link></li>
         </ul>
