@@ -112,21 +112,18 @@ export default function Home() {
       </section >
 
       {/* Introduction / Storytelling */}
-      < section className="section-intro container" >
+      {/* Introduction / Storytelling */}
+      <section className="section-intro container">
         <div className="intro-text">
-          <h2>Sanación Integral: Ciencia y Esencia</h2>
+          <h2>Ciencia y Esencia: Un Camino Hacia el Eje</h2>
           <p>
-            Nuestra base de conocimiento culminó en una formación académica rigurosa,
-            donde contamos con tres especializaciones de grado: <strong>Guitarra, Educación Musical Inicial y de Adultos</strong>.
-            Esta base técnica sólida es el cimiento sobre el que construimos nuestra propuesta.
+            Creemos que la verdadera transformación ocurre cuando la técnica profesional se encuentra con la sensibilidad humana. Nuestra propuesta se apoya en una formación académica rigurosa en instrumentación y educación musical, garantizando que cada intervención sonora tenga un propósito claro y un cimiento sólido.
           </p>
           <p>
-            Sin embargo, la búsqueda de integralidad nos llevó más allá. Integramos disciplinas certificadas como <strong>Yoga, Reiki,
-              Terapia con Flores de Bach y Gemoterapia</strong>. En &quot;La Magia de los Vientos&quot;, fusionamos la precisión
-            de la música académica con la intuición de la sanación vibracional para ofrecerte una experiencia transformadora.
+            Esta estructura se entrelaza con la práctica certificada de Flores de Bach, Gemoterapia y Reiki, permitiéndonos abordar el bienestar desde todos sus ángulos. En nuestro espacio, fusionamos el conocimiento académico con la sanación integral para ofrecerte una experiencia de sintonía profunda y duradera.
           </p>
         </div>
-      </section >
+      </section>
 
       <LeadMagnet />
 
