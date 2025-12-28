@@ -14,8 +14,8 @@ export default function Navbar() {
           <Image
             src="/logo-circular-v2.png"
             alt="La Magia de los Vientos"
-            width={50}
-            height={50}
+            width={60}
+            height={60}
             className="logo-img"
             style={{ borderRadius: '50%' }}
           />
@@ -59,10 +59,16 @@ export default function Navbar() {
         .logo-link {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          height: 100%; /* Ensure full height for centering */
+          gap: 1.5rem;
           font-weight: 600;
-          font-size: 1.25rem;
+          font-size: 1.35rem;
           color: var(--color-primary);
+          text-decoration: none;
+        }
+        
+        .logo-img {
+            border-radius: 50%; /* Ensure circular if the image isn't already */
         }
 
         .nav-links {

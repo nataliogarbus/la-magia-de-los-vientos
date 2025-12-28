@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import FAQ from '@/components/FAQ';
 import LeadMagnet from '@/components/LeadMagnet';
+import { blogPosts } from '@/lib/blog-data';
 
 export default function Home() {
   return (
@@ -22,10 +23,7 @@ export default function Home() {
           <div className="hero-overlay"></div>
         </div>
         <div className="hero-content fade-in-up">
-          <h1 className="hero-title">La Magia de los Vientos</h1>
-          <p className="hero-subtitle">
-            Centro de Armonización Vibracional
-          </p>
+          <h1 className="hero-title">Centro de Armonización Vibracional</h1>
           <p className="hero-description">
             Una metodología avanzada que integra la física del sonido y la terapia floral para el equilibrio integral.
           </p>
@@ -40,28 +38,42 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Methodology / Institutional Authority Section (Formerly About) */}
-      <section id="metodologia" className="about-preview section-padding">
-        <div className="container">
-          <div className="about-content">
-            <h2 className="section-title">Nuestra Metodología</h2>
-            <p className="about-text">
-              En <strong>La Magia de los Vientos</strong>, no entendemos el bienestar como una abstracción, sino como un proceso biológico y físico medible.
+      {/* Methodology / Intro */}
+      <section className="section-intro container">
+        <div className="methodology-box fade-in-up">
+          <h2 className="section-title">Nuestra Metodología</h2>
+
+          <div className="methodology-content">
+            <p>
+              En <strong>La Magia de los Vientos</strong>, no entendemos el bienestar como una abstracción, sino como un proceso
+              biológico y físico medible.
             </p>
-            <p className="about-text">
-              Nuestra propuesta se fundamenta en una <strong>sólida formación académica de grado</strong> con especializaciones en instrumentación y pedagogía musical. Esta base técnica nos permite aplicar la <strong>Frecuencia Sonora</strong> como una herramienta de precisión para la estabilidad del sistema nervioso.
+
+            <div className="decorative-divider">✻</div>
+
+            <p>
+              Nuestra propuesta se fundamenta en una <strong>sólida formación académica de grado</strong> con especializaciones
+              en instrumentación y pedagogía musical. Esta base técnica nos permite aplicar la <strong>Frecuencia Sonora</strong>
+              como una herramienta de precisión para la estabilidad del sistema nervioso.
             </p>
-            <p className="about-text">
-              Integramos la física de los armónicos (Handpan) con la <strong>Terapia Floral de Precisión</strong>, creando una sinergia metodológica que aborda tanto el bloqueo vibracional como el desequilibrio emocional.
+
+            <div className="decorative-divider">✻</div>
+
+            <p>
+              Integramos la física de los armónicos (Handpan) con la <strong>Terapia Floral de Precisión</strong>, creando una
+              sinergia metodológica que aborda tanto el bloqueo vibracional como el desequilibrio emocional.
             </p>
-            <div className="text-center mt-4">
-              <Link href="/servicios" className="btn btn-outline">
-                Conocer nuestros Protocolos de Armonización
-              </Link>
-            </div>
+          </div>
+
+          <div className="mt-5">
+            <Link href="/servicios" className="btn btn-outline">
+              Conocer nuestros Protocolos de Armonización
+            </Link>
           </div>
         </div>
       </section>
+
+      {/* Pillars of Service */}
 
       <style jsx global>{`
         .about-content {
@@ -127,108 +139,190 @@ export default function Home() {
 
       <LeadMagnet />
 
-      {/* Pillars Grid */}
+      {/* Pillars of Service */}
       <section className="section-pillars container">
         <h2 className="section-title">Nuestros Pilares</h2>
         <div className="pillars-grid">
           {/* Consultoría Humana */}
           <div className="pillar-card">
-            <h3>Consultoría Humana</h3>
-            <p>Gestión emocional con Flores de Bach y sintonización vibracional con Hangs.</p>
-
-            <div className="price-block">
-              <div className="price-row">
-                <span className="price-label">Sesión Individual:</span>
-                <span className="price-highlight">$50.000</span>
-              </div>
-              <div className="price-row">
-                <span className="price-label">Plan Sintonía (3 Meses):</span>
-                <span className="price-highlight">$120.000</span>
-                <span className="badge-save">Ahorrás $30.000</span>
-              </div>
+            <div className="card-header">
+              <h3>Consultoría Humana</h3>
+              <p className="card-subtitle">Gestión emocional con Flores de Bach.</p>
             </div>
 
-            <div className="card-actions">
-              <Link href="/reservas" className="btn btn-secondary btn-sm width-100">
-                Agendar Sesión Única
-              </Link>
-              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Consultoria%20Humana" className="btn btn-primary btn-sm width-100">
-                Iniciar Proceso Trimestral
-              </Link>
+            <div className="pricing-body">
+              <div className="price-item">
+                <div className="price-header">
+                  <h4>Sesión Individual</h4>
+                  <span className="price-value">$50.000</span>
+                </div>
+                <ul className="include-list">
+                  <li>✓ Entrevista de diagnóstico</li>
+                  <li>✓ Sesión sonora / Armonización</li>
+                  <li>✓ Preparado floral personalizado</li>
+                  <li>✓ <strong>Reporte Digital de Sintonía</strong></li>
+                </ul>
+                <Link href="/reservas" className="btn btn-outline width-100">
+                  Agendar Sesión Única
+                </Link>
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="price-item highlight-plan">
+                <div className="price-header">
+                  <h4>Plan Sintonía (3 Meses)</h4>
+                  <span className="price-value">$120.000</span>
+                </div>
+                <span className="badge-save">Ahorrás $30.000</span>
+                <ul className="include-list premium">
+                  <li>✓ Seguimiento continuo</li>
+                  <li>✓ Ajuste de fórmula mes a mes</li>
+                  <li>✓ <strong>Dossier Técnico Evolutivo</strong></li>
+                </ul>
+                <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Consultoria%20Humana" className="btn btn-primary width-100 mt-auto">
+                  Iniciar Proceso Trimestral
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* Bienestar Animal */}
           <div className="pillar-card">
-            <h3>Huellas en Calma</h3>
-            <p>Terapia floral para tus compañeros de vida.</p>
-
-            <div className="price-block">
-              <div className="price-row">
-                <span className="price-label">Sesión Individual:</span>
-                <span className="price-highlight">$40.000</span>
-              </div>
-              <div className="price-row">
-                <span className="price-label">Plan Sintonía (3 Meses):</span>
-                <span className="price-highlight">$96.000</span>
-                <span className="badge-save">Ahorrás $24.000</span>
-              </div>
+            <div className="card-header">
+              <h3>Huellas en Calma</h3>
+              <p className="card-subtitle">Terapia floral para mascotas.</p>
             </div>
 
-            <div className="card-actions">
-              <Link href="/reservas" className="btn btn-secondary btn-sm width-100">
-                Agendar Sesión Única
-              </Link>
-              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Huellas%20en%20Calma" className="btn btn-primary btn-sm width-100">
-                Iniciar Proceso Trimestral
-              </Link>
+            <div className="pricing-body">
+              <div className="price-item">
+                <div className="price-header">
+                  <h4>Sesión Individual</h4>
+                  <span className="price-value">$40.000</span>
+                </div>
+                <ul className="include-list">
+                  <li>✓ Entrevista con responsable</li>
+                  <li>✓ Diagnóstico vincular</li>
+                  <li>✓ Preparado floral incluido</li>
+                  <li>✓ <strong>Reporte Digital de Sintonía</strong></li>
+                </ul>
+                <Link href="/reservas" className="btn btn-outline width-100">
+                  Agendar Sesión Única
+                </Link>
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="price-item highlight-plan">
+                <div className="price-header">
+                  <h4>Plan Sintonía (3 Meses)</h4>
+                  <span className="price-value">$96.000</span>
+                </div>
+                <span className="badge-save">Ahorrás $24.000</span>
+                <ul className="include-list premium">
+                  <li>✓ Acompañamiento en cambios</li>
+                  <li>✓ Ajuste de fórmula mes a mes</li>
+                  <li>✓ <strong>Dossier Técnico Evolutivo</strong></li>
+                </ul>
+                <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Huellas%20en%20Calma" className="btn btn-primary width-100 mt-auto">
+                  Iniciar Proceso Trimestral
+                </Link>
+              </div>
             </div>
           </div>
 
-          {/* Armonización de Espacios */}
+          {/* Armonización */}
           <div className="pillar-card">
-            <h3>Armonización de Espacios</h3>
-            <p>Limpieza energética y sonora para hogares y oficinas.</p>
-
-            <div className="price-block">
-              <div className="price-row">
-                <span className="price-label">Sesión Individual:</span>
-                <span className="price-highlight">$70.000</span>
-              </div>
-              <div className="price-row">
-                <span className="price-label">Plan Sintonía (3 Meses):</span>
-                <span className="price-highlight">$180.000</span>
-                <span className="badge-save">Ahorrás $30.000</span>
-              </div>
+            <div className="card-header">
+              <h3>Armonización</h3>
+              <p className="card-subtitle">Alineación vibracional de espacios.</p>
             </div>
 
-            <div className="card-actions">
-              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20una%20sesion%20de%20Armonizacion%20de%20Espacios" className="btn btn-secondary btn-sm width-100">
-                Agendar Sesión Única
-              </Link>
-              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Espacios" className="btn btn-primary btn-sm width-100">
-                Iniciar Proceso Trimestral
-              </Link>
+            <div className="pricing-body">
+              <div className="price-item">
+                <div className="price-header">
+                  <h4>Sesión Individual</h4>
+                  <span className="price-value">$70.000</span>
+                </div>
+                <ul className="include-list">
+                  <li>✓ Limpieza sonora in situ</li>
+                  <li>✓ Sahumado energético</li>
+                  <li>✓ Diagnóstico del entorno</li>
+                  <li>✓ <strong>Reporte Digital de Sintonía</strong></li>
+                </ul>
+                <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20una%20sesion%20de%20Armonizacion%20de%20Espacios" className="btn btn-outline width-100">
+                  Agendar Sesión Única
+                </Link>
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="price-item highlight-plan">
+                <div className="price-header">
+                  <h4>Plan Sintonía (3 Meses)</h4>
+                  <span className="price-value">$180.000</span>
+                </div>
+                <span className="badge-save">Ahorrás $30.000</span>
+                <ul className="include-list premium">
+                  <li>✓ Mantenimiento energético</li>
+                  <li>✓ Sostenimiento de la frecuencia</li>
+                  <li>✓ <strong>Dossier Técnico Evolutivo</strong></li>
+                </ul>
+                <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Espacios" className="btn btn-primary width-100 mt-auto">
+                  Iniciar Proceso Trimestral
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* Código Vibratorio */}
           <div className="pillar-card premium">
-            <h3>Código Vibratorio</h3>
-            <p>Una pieza musical única, creada específicamente para tu frecuencia.</p>
+            <div className="card-header">
+              <h3>Código Vibratorio</h3>
+              <p className="card-subtitle">Composición musical única.</p>
+            </div>
 
-            <div className="price-block">
-              <div className="price-row">
-                <span className="price-label">Inversión:</span>
-                <span className="price-highlight">Consultar presupuesto personalizado</span>
+            <div className="pricing-body centered-body">
+              <p className="premium-desc">
+                Una pieza musical única, creada específicamente para tu frecuencia.
+                Composición académica y grabación de alta fidelidad.
+              </p>
+
+              <div className="price-item">
+                <div className="price-header centered">
+                  <h4>Inversión</h4>
+                </div>
+                <p className="consultar-precio">Consultar presupuesto personalizado</p>
+              </div>
+
+              <div className="card-actions mt-auto">
+                <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20solicitar%20un%20presupuesto%20para%20el%20Codigo%20Vibratorio%20exclusivo" className="btn btn-primary width-100">
+                  Solicitar Presupuesto
+                </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="card-actions">
-              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20solicitar%20un%20presupuesto%20para%20el%20Codigo%20Vibratorio%20exclusivo" className="btn btn-primary btn-sm width-100">
-                Solicitar Presupuesto
-              </Link>
-            </div>
+      {/* Science Section */}
+      <section className="section-science">
+        <div className="container">
+          <div className="section-intro no-padding-top">
+            <h2 className="section-title">Ciencia y Bienestar</h2>
+            <p>Artículos para entender la biología de la sintonía personal.</p>
+          </div>
+
+          <div className="blog-grid-home">
+            {blogPosts.map((post) => (
+              <article key={post.slug} className="blog-card-home">
+                <h3>{post.title}</h3>
+                <p>{post.excerpt}</p>
+                <Link href={`/blog/${post.slug}`} className="read-more">
+                  Leer artículo completo →
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -237,16 +331,28 @@ export default function Home() {
 
       <style jsx>{`
         /* Science Section Styles */
+        .section-science {
+            background-color: rgba(232, 211, 211, 0.15); /* Alternated background */
+            padding: 8rem 0; /* Consistent spacing */
+        }
+        
+        .no-padding-top {
+            padding-top: 0;
+            padding-bottom: 3rem;
+        }
+
         .blog-grid-home {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
         }
         .blog-card-home {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); /* Soft, subtle shadow */
             transition: transform 0.3s;
             border-top: 4px solid var(--color-primary);
         }
@@ -336,44 +442,93 @@ export default function Home() {
 
         .section-intro {
           padding: 6rem 1.5rem;
-          text-align: center;
-          max-width: 800px;
+          display: flex;
+          justify-content: center;
         }
 
-        .section-intro h2 {
-          margin-bottom: 1.5rem;
+        .methodology-box {
+            background-color: #faf9f9; /* Very subtle warm gray */
+            border: 1px solid rgba(58, 107, 101, 0.1); /* Subtle primary color border */
+            padding: 4rem 3rem;
+            border-radius: var(--radius);
+            max-width: 900px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); /* Soft elevation */
+            position: relative;
+        }
+        
+        /* Decorative corner accents implies institutional elegance */
+        .methodology-box::before {
+            content: "";
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 3rem;
+            height: 3rem;
+            border-top: 2px solid var(--color-secondary);
+            border-left: 2px solid var(--color-secondary);
+            opacity: 0.6;
+        }
+
+        .methodology-box::after {
+            content: "";
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            width: 3rem;
+            height: 3rem;
+            border-bottom: 2px solid var(--color-secondary);
+            border-right: 2px solid var(--color-secondary);
+            opacity: 0.6;
+        }
+
+        .section-title {
+          margin-bottom: 2.5rem;
           font-size: 2.5rem;
+          color: var(--color-primary);
+        }
+        
+        .methodology-content p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--color-foreground);
+            margin-bottom: 1rem;
         }
 
-        .section-intro p {
-          font-size: 1.2rem;
-          line-height: 1.8;
-          color: var(--color-earth);
+        .decorative-divider {
+            color: var(--color-secondary);
+            font-size: 1.5rem;
+            margin: 1.5rem 0;
+            opacity: 0.8;
         }
 
         .section-pillars {
-          padding-bottom: 6rem;
+          padding-bottom: 8rem;
+          padding-top: 4rem;
         }
 
         .section-title {
           text-align: center;
-          margin-bottom: 3rem;
-          font-size: 2.5rem;
+          margin-bottom: 4rem;
+          font-size: 2.8rem;
         }
 
         .pillars-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 2rem;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 2.5rem;
+          align-items: stretch; /* Stretch to same height */
         }
 
         .pillar-card {
           background: white;
-          padding: 2rem;
+          padding: 2.5rem; /* Increased padding */
           border-radius: var(--radius);
           box-shadow: var(--shadow-sm);
           transition: transform 0.3s, box-shadow 0.3s;
           border: 1px solid rgba(0,0,0,0.03);
+          display: flex;
+          flex-direction: column;
         }
 
         .pillar-card:hover {
@@ -381,14 +536,123 @@ export default function Home() {
           box-shadow: var(--shadow-md);
         }
 
-        .pillar-card h3 {
-          margin-bottom: 1rem;
-          color: var(--color-primary);
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            min-height: 80px; /* Align titles */
         }
 
+        .pillar-card h3 {
+          margin-bottom: 0.75rem; /* Increased from 0.5rem */
+          color: var(--color-primary);
+          font-size: 1.6rem;
+        }
+        
+        .card-subtitle {
+            color: var(--foreground);
+            font-size: 0.95rem;
+            opacity: 0.8;
+            margin-bottom: 2.5rem; /* Increased significantly for spacing */
+        }
+        
+        /* Pricing Body Styles */
+        .pricing-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .price-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .price-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.5rem;
+        }
+        
+        .price-header h4 {
+            font-size: 1rem;
+            color: var(--foreground);
+            font-weight: 600;
+        }
+        
+        .price-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        
+        .include-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: var(--foreground);
+        }
+        
+        .include-list li {
+            margin-bottom: 0.4rem;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: rgba(0,0,0,0.05);
+            margin: 1.5rem 0;
+        }
+        
+        .highlight-plan {
+            background-color: #FDFDFB; /* Subtle highlight */
+            margin: -1rem -1rem 1.5rem -1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        
+        .badge-save {
+            background-color: var(--color-secondary);
+            color: var(--foreground);
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .include-list.premium li {
+            color: var(--color-primary); /* Highlight benefits */
+        }
+        
+        /* Premium Card */
         .pillar-card.premium {
-          background: linear-gradient(135deg, white 0%, var(--color-secondary) 100%);
-          border-color: var(--color-secondary);
+          background: linear-gradient(135deg, white 0%, #fcfbfb 100%);
+          border: 1px solid var(--color-secondary);
+        }
+        
+        .centered-body {
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .price-header.centered {
+            justify-content: center;
+        }
+        
+        .consultar-precio {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: 1rem 0 2rem 0;
+        }
+        
+        .premium-desc {
+            margin-bottom: 2rem;
+            color: var(--foreground);
+            line-height: 1.6;
         }
 
         .fade-in-up {
