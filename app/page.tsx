@@ -131,25 +131,104 @@ export default function Home() {
       <section className="section-pillars container">
         <h2 className="section-title">Nuestros Pilares</h2>
         <div className="pillars-grid">
-          {/* Card 1 */}
+          {/* Consultoría Humana */}
           <div className="pillar-card">
             <h3>Consultoría Humana</h3>
             <p>Gestión emocional con Flores de Bach y sintonización vibracional con Hangs.</p>
+
+            <div className="price-block">
+              <div className="price-row">
+                <span className="price-label">Sesión Individual:</span>
+                <span className="price-highlight">$50.000</span>
+              </div>
+              <div className="price-row">
+                <span className="price-label">Plan Sintonía (3 Meses):</span>
+                <span className="price-highlight">$120.000</span>
+                <span className="badge-save">Ahorrás $30.000</span>
+              </div>
+            </div>
+
+            <div className="card-actions">
+              <Link href="/reservas" className="btn btn-secondary btn-sm width-100">
+                Agendar Sesión Única
+              </Link>
+              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Consultoria%20Humana" className="btn btn-primary btn-sm width-100">
+                Iniciar Proceso Trimestral
+              </Link>
+            </div>
           </div>
-          {/* Card 2 */}
+
+          {/* Bienestar Animal */}
           <div className="pillar-card">
-            <h3>Bienestar Animal</h3>
-            <p>Huellas en Calma. Terapia floral para tus compañeros de vida.</p>
+            <h3>Huellas en Calma</h3>
+            <p>Terapia floral para tus compañeros de vida.</p>
+
+            <div className="price-block">
+              <div className="price-row">
+                <span className="price-label">Sesión Individual:</span>
+                <span className="price-highlight">$40.000</span>
+              </div>
+              <div className="price-row">
+                <span className="price-label">Plan Sintonía (3 Meses):</span>
+                <span className="price-highlight">$96.000</span>
+                <span className="badge-save">Ahorrás $24.000</span>
+              </div>
+            </div>
+
+            <div className="card-actions">
+              <Link href="/reservas" className="btn btn-secondary btn-sm width-100">
+                Agendar Sesión Única
+              </Link>
+              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Huellas%20en%20Calma" className="btn btn-primary btn-sm width-100">
+                Iniciar Proceso Trimestral
+              </Link>
+            </div>
           </div>
-          {/* Card 3 */}
+
+          {/* Armonización de Espacios */}
           <div className="pillar-card">
             <h3>Armonización de Espacios</h3>
             <p>Limpieza energética y sonora para hogares y oficinas.</p>
+
+            <div className="price-block">
+              <div className="price-row">
+                <span className="price-label">Sesión Individual:</span>
+                <span className="price-highlight">$70.000</span>
+              </div>
+              <div className="price-row">
+                <span className="price-label">Plan Sintonía (3 Meses):</span>
+                <span className="price-highlight">$180.000</span>
+                <span className="badge-save">Ahorrás $30.000</span>
+              </div>
+            </div>
+
+            <div className="card-actions">
+              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20una%20sesion%20de%20Armonizacion%20de%20Espacios" className="btn btn-secondary btn-sm width-100">
+                Agendar Sesión Única
+              </Link>
+              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20el%20Plan%20Sintonia%20de%20Espacios" className="btn btn-primary btn-sm width-100">
+                Iniciar Proceso Trimestral
+              </Link>
+            </div>
           </div>
-          {/* Card 4 */}
+
+          {/* Código Vibratorio */}
           <div className="pillar-card premium">
             <h3>Código Vibratorio</h3>
             <p>Una pieza musical única, creada específicamente para tu frecuencia.</p>
+
+            <div className="price-block">
+              <div className="price-row">
+                <span className="price-label">Inversión:</span>
+                <span className="price-highlight">Consultar presupuesto personalizado</span>
+              </div>
+            </div>
+
+            <div className="card-actions">
+              <Link href="https://wa.me/5491131671954?text=Hola,%20me%20interesa%20solicitar%20un%20presupuesto%20para%20el%20Codigo%20Vibratorio%20exclusivo" className="btn btn-primary btn-sm width-100">
+                Solicitar Presupuesto
+              </Link>
+            </div>
           </div>
         </div>
       </section>

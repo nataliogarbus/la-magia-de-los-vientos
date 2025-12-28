@@ -42,10 +42,13 @@ export default function BookingPage() {
         </div>
 
         <div className="info-block">
-          <h4>Pagos y Cancelaciones</h4>
+          <h3>Información Importante</h3>
           <p>
-            Aceptamos Mercado Pago y Transferencia Bancaria.
-            Las cancelaciones deben realizarse con 24hs de anticipación.
+            Los planes de suscripción garantizan la continuidad de la sintonía vibracional y el suministro de fórmulas florales durante todo el trimestre.
+            Inversión final expresada en Pesos Argentinos. Aceptamos Mercado Pago y Transferencia Bancaria.
+          </p>
+          <p className="cancel-policy">
+            * Política de cancelación: 24hs de anticipación para reprogramar sin cargo.
           </p>
         </div>
       </div>

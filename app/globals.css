@@ -127,3 +127,49 @@ a {
 .animate-fade-in {
   animation: fadeIn 0.8s ease-out forwards;
 }
+
+/* Pricing Styles */
+.price-block {
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.price-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.75rem;
+}
+
+.price-label {
+  font-size: 0.9rem;
+  color: var(--foreground);
+}
+
+.price-highlight {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.badge-save {
+  background-color: var(--color-secondary);
+  color: var(--foreground);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+  margin-top: 0.2rem;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.width-100 {
+  width: 100%;
+}
