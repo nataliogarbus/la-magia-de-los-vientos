@@ -120,7 +120,7 @@ export default function BachWizard() {
                   
                   <div className="product-actions">
                     <a 
-                      href={`https://wa.me/5491131671954?text=Hola! Vengo de la web. Quiero comprar el preparado ${getProduct()?.name} para ${PROFILES.find(p => p.id === profile)?.label}.`} 
+                      href={`https://wa.me/5491149143734?text=Hola! Vengo de la web. Quiero comprar el preparado ${getProduct()?.name} para ${PROFILES.find(p => p.id === profile)?.label}.`} 
                       className="btn btn-primary width-100"
                       target="_blank"
                     >

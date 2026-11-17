@@ -54,7 +54,7 @@ export default function RootLayout({
     "url": "https://lamagiadelosvientos.com.ar",
     "logo": "https://lamagiadelosvientos.com.ar/logo-magia.png",
     "image": "https://lamagiadelosvientos.com.ar/logo-magia.png",
-    "telephone": "+54-11-3167-1954",
+    "telephone": "+54-11-4914-3734",
     "priceRange": "$$",
     "description": "Centro de armonización vibracional y farmacia floral artesanal. Especialistas en Preparados de Flores de Bach personalizados, sesiones de Handpan y bienestar animal.",
     "address": {
@@ -81,7 +81,7 @@ export default function RootLayout({
       ]
     },
     "sameAs": [
-      "https://wa.me/5491131671954"
+      "https://wa.me/5491149143734"
     ]
   };
 

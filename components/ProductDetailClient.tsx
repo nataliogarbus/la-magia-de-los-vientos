@@ -11,7 +11,7 @@ type Props = {
 
 export default function ProductDetailClient({ product, related }: Props) {
   const waMessage = encodeURIComponent(`Hola! Quiero consultar por el preparado: ${product.title} ($${product.price.toLocaleString('es-AR')})`);
-  const waLink = `https://wa.me/5491131671954?text=${waMessage}`;
+  const waLink = `https://wa.me/5491149143734?text=${waMessage}`;
 
   return (
     <div className="product-detail-page">

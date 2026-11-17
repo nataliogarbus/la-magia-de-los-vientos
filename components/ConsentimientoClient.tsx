@@ -191,7 +191,7 @@ export default function ConsentimientoClient() {
   };
 
   const whatsappUrl = submittedData
-    ? `https://wa.me/5491131671954?text=${encodeURIComponent(
+    ? `https://wa.me/5491149143734?text=${encodeURIComponent(
         `Hola Eliana, completé y firmé el Consentimiento Informado.\n\nNombre: ${submittedData.nombreCompleto}\nDNI: ${submittedData.dni}\nFecha: ${submittedData.fechaFirma}`
       )}`
     : '';

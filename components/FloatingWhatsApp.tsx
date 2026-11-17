@@ -6,7 +6,7 @@ export default function FloatingWhatsApp() {
   return (
     <>
       <Link 
-        href="https://wa.me/5491131671954?text=Hola! Vengo de la web y me gustaría hacer una consulta."
+        href="https://wa.me/5491149143734?text=Hola! Vengo de la web y me gustaría hacer una consulta."
         className="whatsapp-float"
         target="_blank"
         rel="noopener noreferrer"

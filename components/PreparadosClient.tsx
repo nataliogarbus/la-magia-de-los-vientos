@@ -91,7 +91,7 @@ export default function PreparadosClient() {
                     </div>
                     <div className="prep-footer">
                       <span className="prep-price">${product.price.toLocaleString('es-AR')}</span>
-                      <a href={`https://wa.me/5491131671954?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-prep">Pedir por WhatsApp</a>
+                      <a href={`https://wa.me/5491149143734?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-prep">Pedir por WhatsApp</a>
                     </div>
                   </div>
                 </article>

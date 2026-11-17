@@ -189,7 +189,7 @@ export default function ConsultasClient() {
                   <div className="cta-buttons">
                     <Link href="/reservas" className="btn btn-primary">Agendar Consulta</Link>
                     <a
-                      href={`https://wa.me/5491131671954?text=Hola! Quiero consultar por: ${s.nombre}`}
+                      href={`https://wa.me/5491149143734?text=Hola! Quiero consultar por: ${s.nombre}`}
                       target="_blank" rel="noopener noreferrer"
                       className="btn btn-secondary"
                     >

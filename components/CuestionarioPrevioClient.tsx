@@ -194,7 +194,7 @@ export default function CuestionarioPrevioClient() {
   };
 
   const whatsappUrl = submittedData
-    ? `https://wa.me/5491131671954?text=${encodeURIComponent(
+    ? `https://wa.me/5491149143734?text=${encodeURIComponent(
         `Hola Eliana, ya completé y envié mi Cuestionario Previo a la Consulta.\n\nNombre: ${submittedData.nombreCompleto}\nDNI: ${submittedData.dni}`
       )}`
     : '';
