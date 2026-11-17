@@ -7,6 +7,7 @@ import LeadMagnet from '@/components/LeadMagnet';
 import BachWizard from '@/components/BachWizard';
 import ProductCarousel from '@/components/ProductCarousel';
 import FeaturedCategories from '@/components/FeaturedCategories';
+import SobreElianaSection from '@/components/SobreElianaSection';
 import { blogPosts } from '@/lib/blog-data';
 
 export default function Home() {
@@ -176,37 +177,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Specialist Authority Section - Elite Profile */}
-      <section className="section-specialist">
-        <div className="container">
-          <div className="specialist-grid">
-            <div className="specialist-image-box animate-float">
-              <div className="img-placeholder-portrait">
-                <span className="placeholder-text">Autoridad Terapéutica</span>
-              </div>
-              <div className="experience-badge">10+ Años</div>
-            </div>
-            <div className="specialist-info">
-              <span className="badge-specialist">Terapeuta Certificada</span>
-              <h2 className="section-title text-left">El Cuidado en Buenas Manos</h2>
-              <p className="specialist-bio">
-                Combinamos el rigor académico con la dedicación artesanal. Cada fórmula 
-                se prepara íntegramente con nuestro kit de 38 esencias puras, 
-                asegurando una trazabilidad emocional absoluta.
-              </p>
-              <p className="specialist-bio secondary">
-                No creemos en la estandarización. Creemos en la escucha profunda 
-                para identificar el "dolor" emocional y transformarlo en equilibrio.
-              </p>
-              <div className="specialist-values">
-                <div className="value"><span>—</span> Kit Esencias Originales</div>
-                <div className="value"><span>—</span> Consultas Bio-Emocionales</div>
-                <div className="value"><span>—</span> Envío Protegido a Todo el País</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Trayectoria y Credenciales de Eliana */}
+      <SobreElianaSection showConsultasLink={true} />
 
       <LeadMagnet />
 

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import SobreElianaSection from '@/components/SobreElianaSection';
 
 const SERVICIOS = [
   {
@@ -203,30 +204,8 @@ export default function ConsultasClient() {
         </div>
       </section>
 
-      {/* Formación */}
-      <section className="formacion-section">
-        <div className="container">
-          <div className="formacion-card">
-            <span className="formacion-caption">Nuestra Credencial</span>
-            <h2>La Autoridad detrás del Método</h2>
-            <p>
-              La efectividad de cada sesión se sustenta en una sólida formación académica:
-              egresada del <strong>Conservatorio de San Martín</strong> con triple especialización
-              en Guitarra, Educación Musical Inicial y de Adultos.
-            </p>
-            <p>
-              Complementada con certificaciones en <strong>Yoga, Reiki, Terapia Floral de Bach
-              y Gemoterapia</strong>, nuestra metodología integra el rigor científico-musical
-              con el conocimiento vibracional.
-            </p>
-            <div className="formacion-credenciales">
-              <span>Conservatorio Provincial de Música</span>
-              <span>Facilitadora Certificada de Flores de Bach</span>
-              <span>Instructora de Yoga y Reiki</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Trayectoria y Credenciales de Eliana */}
+      <SobreElianaSection showConsultasLink={false} />
 
       {/* FAQ */}
       <section className="faq-consultas">

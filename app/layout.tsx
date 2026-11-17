@@ -57,6 +57,29 @@ export default function RootLayout({
     "telephone": "+54-11-4914-3734",
     "priceRange": "$$",
     "description": "Centro de armonización vibracional y farmacia floral artesanal. Especialistas en Preparados de Flores de Bach personalizados, sesiones de Handpan y bienestar animal.",
+    "founder": {
+      "@type": "Person",
+      "name": "Eliana",
+      "jobTitle": "Terapeuta Integrativa y Especialista en Terapia Floral",
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "Conservatorio de Música de San Martín"
+      },
+      "knowsAbout": [
+        "Biodecodificación Transgeneracional",
+        "Flores de Bach",
+        "Gemoterapia",
+        "Yoga",
+        "Conciencia Corporal y Sistema Nervioso"
+      ]
+    },
+    "knowsAbout": [
+      "Biodecodificación Transgeneracional",
+      "Flores de Bach",
+      "Gemoterapia",
+      "Yoga",
+      "Armonización Vibracional"
+    ],
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Moreno",
