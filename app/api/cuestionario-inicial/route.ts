@@ -10,9 +10,6 @@ interface CuestionarioPayload {
   ocupacion: string;
   telefono: string;
   email: string;
-  confirmaEdadYNoEmbarazo: boolean;
-  diagnosticoSevero: 'Sí' | 'No';
-  autorizacionMedica?: string;
   temaPrincipal: string;
   origenTema: string;
   sintomasFisicos?: string;
@@ -63,36 +60,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (body.confirmaEdadYNoEmbarazo !== true) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'Debés confirmar que sos mayor de 14 años y no cursás un embarazo.',
-        },
-        { status: 400 }
-      );
-    }
-
-    if (body.diagnosticoSevero !== 'Sí' && body.diagnosticoSevero !== 'No') {
-      return NextResponse.json(
-        { ok: false, error: 'Debés responder la declaración de protocolo médico.' },
-        { status: 400 }
-      );
-    }
-
-    if (
-      body.diagnosticoSevero === 'Sí' &&
-      (!body.autorizacionMedica || body.autorizacionMedica.trim().length === 0)
-    ) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'Por favor, aclará si contás con autorización médica o psicológica.',
-        },
-        { status: 400 }
-      );
-    }
-
     const now = new Date();
     const timestampISO = now.toISOString();
     const timestampArgentina = new Intl.DateTimeFormat('es-AR', {
@@ -102,8 +69,8 @@ export async function POST(request: NextRequest) {
     }).format(now);
 
     const record = {
-      tipoDocumento: 'CUESTIONARIO_PREVIO',
-      source: 'cuestionario_previo',
+      tipoDocumento: 'CUESTIONARIO_INICIAL',
+      source: 'cuestionario_inicial',
       timestampISO,
       timestampArgentina,
       nombreCompleto: body.nombreCompleto!.trim(),
@@ -115,9 +82,6 @@ export async function POST(request: NextRequest) {
       ocupacion: body.ocupacion!.trim(),
       telefono: body.telefono!.trim(),
       email: body.email!.trim(),
-      confirmaEdadYNoEmbarazo: true,
-      diagnosticoSevero: body.diagnosticoSevero,
-      autorizacionMedica: body.autorizacionMedica?.trim() || '',
       temaPrincipal: body.temaPrincipal!.trim(),
       origenTema: body.origenTema!.trim(),
       sintomasFisicos: body.sintomasFisicos?.trim() || '',
@@ -149,15 +113,15 @@ export async function POST(request: NextRequest) {
         synced = webhookRes.ok;
         if (!webhookRes.ok) {
           console.error(
-            `[CuestionarioPrevio] Webhook respondió ${webhookRes.status}: ${webhookRes.statusText}`
+            `[CuestionarioInicial] Webhook respondió ${webhookRes.status}: ${webhookRes.statusText}`
           );
         }
       } catch (webhookError) {
-        console.error('[CuestionarioPrevio] Error enviando al webhook:', webhookError);
+        console.error('[CuestionarioInicial] Error enviando al webhook:', webhookError);
       }
     } else {
       console.warn(
-        '[CuestionarioPrevio] GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL / N8N_CONSENTIMIENTO_WEBHOOK_URL no configurada.'
+        '[CuestionarioInicial] GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL / N8N_CONSENTIMIENTO_WEBHOOK_URL no configurada.'
       );
     }
 
@@ -168,7 +132,7 @@ export async function POST(request: NextRequest) {
       timestampArgentina,
     });
   } catch (error) {
-    console.error('[CuestionarioPrevio] Error procesando solicitud:', error);
+    console.error('[CuestionarioInicial] Error procesando solicitud:', error);
     return NextResponse.json(
       { ok: false, error: 'No se pudo procesar el cuestionario. Intentá nuevamente.' },
       { status: 500 }

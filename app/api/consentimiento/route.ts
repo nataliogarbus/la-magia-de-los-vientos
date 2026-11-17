@@ -9,6 +9,11 @@ interface ConsentimientoPayload {
   tratamientoActual: 'Sí' | 'No';
   observaciones?: string;
   aceptaTerminos: boolean;
+  confirmaEncuadreEtico: boolean;
+  pacienteRiesgo: 'Sí' | 'No';
+  autorizacionMedicaBase64?: string;
+  autorizacionMedicaNombre?: string;
+  autorizacionMedicaMime?: string;
   aclaracion: string;
   fechaFirma: string;
   firmaBase64: string;
@@ -46,11 +51,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (body.confirmaEncuadreEtico !== true) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Debe confirmar la declaración de admisión y encuadre ético.',
+        },
+        { status: 400 }
+      );
+    }
+
     if (body.tratamientoActual !== 'Sí' && body.tratamientoActual !== 'No') {
       return NextResponse.json(
         { ok: false, error: 'Debe indicar si se encuentra bajo tratamiento actual.' },
         { status: 400 }
       );
+    }
+
+    if (body.pacienteRiesgo !== 'Sí' && body.pacienteRiesgo !== 'No') {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Debe indicar si es paciente psiquiátrico, oncológico o cardíaco.',
+        },
+        { status: 400 }
+      );
+    }
+
+    if (body.pacienteRiesgo === 'Sí') {
+      if (
+        !body.autorizacionMedicaBase64 ||
+        !body.autorizacionMedicaBase64.startsWith('data:')
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Debe adjuntar la autorización médica o psicológica en formato PDF, JPG o PNG.',
+          },
+          { status: 400 }
+        );
+      }
     }
 
     if (!body.firmaBase64?.startsWith('data:image/png;base64,')) {
@@ -69,6 +109,7 @@ export async function POST(request: NextRequest) {
     }).format(now);
 
     const record = {
+      tipoDocumento: 'CONSENTIMIENTO',
       source: 'consentimiento_informado',
       timestampISO,
       timestampArgentina,
@@ -80,6 +121,11 @@ export async function POST(request: NextRequest) {
       tratamientoActual: body.tratamientoActual,
       observaciones: body.observaciones?.trim() || '',
       aceptaTerminos: true,
+      confirmaEncuadreEtico: true,
+      pacienteRiesgo: body.pacienteRiesgo,
+      autorizacionMedicaBase64: body.autorizacionMedicaBase64 || '',
+      autorizacionMedicaNombre: body.autorizacionMedicaNombre || '',
+      autorizacionMedicaMime: body.autorizacionMedicaMime || '',
       aclaracion: body.aclaracion!.trim(),
       fechaFirma: body.fechaFirma?.trim() || timestampArgentina,
       firmaBase64: body.firmaBase64,

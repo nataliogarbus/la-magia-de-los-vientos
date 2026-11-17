@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 interface CuestionarioState {
   // Paso 1
@@ -13,9 +14,6 @@ interface CuestionarioState {
   ocupacion: string;
   telefono: string;
   email: string;
-  confirmaEdadYNoEmbarazo: boolean;
-  diagnosticoSevero: '' | 'Sí' | 'No';
-  autorizacionMedica: string;
   // Paso 2
   temaPrincipal: string;
   origenTema: string;
@@ -39,13 +37,14 @@ interface SubmittedCuestionario extends CuestionarioState {
 }
 
 const STEPS = [
-  { id: 1, title: 'Datos Personales y Admisión' },
+  { id: 1, title: 'Datos Personales' },
   { id: 2, title: 'Motivo, Síntomas y Línea del Tiempo' },
   { id: 3, title: 'Historia Familiar y Vínculos' },
   { id: 4, title: 'Logros, Duelos y Miedos' },
 ];
 
-export default function CuestionarioPrevioClient() {
+export default function CuestionarioInicialClient() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -61,9 +60,6 @@ export default function CuestionarioPrevioClient() {
     ocupacion: '',
     telefono: '',
     email: '',
-    confirmaEdadYNoEmbarazo: false,
-    diagnosticoSevero: '',
-    autorizacionMedica: '',
     temaPrincipal: '',
     origenTema: '',
     sintomasFisicos: '',
@@ -78,6 +74,23 @@ export default function CuestionarioPrevioClient() {
     duelosPendientes: '',
     mayoresMiedos: '',
   });
+
+  useEffect(() => {
+    const nombre = searchParams.get('nombre') || '';
+    const dni = searchParams.get('dni') || '';
+    const email = searchParams.get('email') || '';
+    const telefono = searchParams.get('telefono') || '';
+
+    if (nombre || dni || email || telefono) {
+      setForm((prev) => ({
+        ...prev,
+        nombreCompleto: prev.nombreCompleto || nombre,
+        dni: prev.dni || dni,
+        email: prev.email || email,
+        telefono: prev.telefono || telefono,
+      }));
+    }
+  }, [searchParams]);
 
   const handleDateChange = (dateVal: string) => {
     let computedEdad = form.edad;
@@ -113,15 +126,6 @@ export default function CuestionarioPrevioClient() {
       }
       if (Number(form.edad) < 14) {
         return 'Este acompañamiento está habilitado para personas mayores de 14 años.';
-      }
-      if (!form.confirmaEdadYNoEmbarazo) {
-        return 'Debés confirmar que sos mayor de 14 años y no te encontrás cursando un embarazo.';
-      }
-      if (!form.diagnosticoSevero) {
-        return 'Por favor, indicá si contás con diagnóstico psiquiátrico severo o tratamiento cardíaco/oncológico en curso.';
-      }
-      if (form.diagnosticoSevero === 'Sí' && !form.autorizacionMedica.trim()) {
-        return 'Por favor, aclará si contás con autorización médica o psicológica para el acompañamiento.';
       }
     }
 
@@ -169,7 +173,7 @@ export default function CuestionarioPrevioClient() {
     setErrorMsg(null);
     setSubmitting(true);
     try {
-      const response = await fetch('/api/cuestionario-previo', {
+      const response = await fetch('/api/cuestionario-inicial', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -193,20 +197,14 @@ export default function CuestionarioPrevioClient() {
     }
   };
 
-  const whatsappUrl = submittedData
-    ? `https://wa.me/5491149143734?text=${encodeURIComponent(
-        `Hola Eliana, ya completé y envié mi Cuestionario Previo a la Consulta.\n\nNombre: ${submittedData.nombreCompleto}\nDNI: ${submittedData.dni}`
-      )}`
-    : '';
-
   const progressPercent = (step / STEPS.length) * 100;
 
   return (
     <main className="cuestionario-page">
       <div className="container cuestionario-container">
         <header className="cuestionario-header">
-          <span className="cuestionario-badge">Documento Privado · Confidencial</span>
-          <h1>Cuestionario Previo a la Consulta</h1>
+          <span className="cuestionario-badge">Paso 2 de 2 · Confidencial</span>
+          <h1>Cuestionario Inicial</h1>
           <p className="cuestionario-intro">
             Hola: este cuestionario me permitirá conocer mejor tu historia antes de nuestro encuentro y aprovechar al máximo el tiempo de sesión. Tómate un momento tranquilo para responder con total sinceridad; toda la información es estrictamente confidencial. Por favor, envíamelo completo al menos 48 horas antes de vernos.
           </p>
@@ -215,18 +213,28 @@ export default function CuestionarioPrevioClient() {
         {submittedData ? (
           <section className="confirmation-card" aria-live="polite">
             <div className="confirmation-header">
-              <span className="confirmation-badge">Cuestionario Enviado</span>
-              <h2>Gracias, {submittedData.nombreCompleto}</h2>
+              <span className="confirmation-badge">Admisión Completada</span>
+              <h2>¡Documentación Recibida, {submittedData.nombreCompleto}!</h2>
               <p>
-                Recibimos tu cuestionario previo correctamente. Podés guardar una copia en PDF para tu registro y avisarle a Eliana por WhatsApp.
+                Tu Cuestionario Inicial fue registrado con éxito. <strong>Eliana ya recibió automáticamente toda la documentación en su sistema</strong> y no necesitás realizar ningún envío adicional.
               </p>
             </div>
 
+            <div className="confirmation-actions no-print">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="pdf-optional-btn"
+              >
+                Imprimir / Guardar copia en PDF (Opcional)
+              </button>
+            </div>
+
             <div className="summary-box">
-              <h3>Resumen de Respuestas</h3>
+              <h3>Resumen del Cuestionario Inicial</h3>
 
               <div className="summary-block">
-                <h4>1. Datos Personales y Encuadre</h4>
+                <h4>1. Datos Personales</h4>
                 <div className="summary-grid">
                   <div className="summary-item">
                     <span className="summary-label">Nombre y apellido</span>
@@ -256,16 +264,6 @@ export default function CuestionarioPrevioClient() {
                     <span className="summary-label">Contacto</span>
                     <span className="summary-value">
                       {submittedData.telefono} · {submittedData.email}
-                    </span>
-                  </div>
-                  <div className="summary-item summary-item-full">
-                    <span className="summary-label">Protocolo de admisión</span>
-                    <span className="summary-value">
-                      Mayor de 14 años y sin embarazo: Confirmado · Diagnóstico severo o tratamiento cardíaco/oncológico:{' '}
-                      {submittedData.diagnosticoSevero}
-                      {submittedData.autorizacionMedica
-                        ? ` (${submittedData.autorizacionMedica})`
-                        : ''}
                     </span>
                   </div>
                 </div>
@@ -361,24 +359,6 @@ export default function CuestionarioPrevioClient() {
                 </p>
               )}
             </div>
-
-            <div className="confirmation-actions no-print">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="btn btn-outline"
-              >
-                Imprimir / Guardar copia en PDF
-              </button>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                Avisar a Eliana por WhatsApp
-              </a>
-            </div>
           </section>
         ) : (
           <form onSubmit={handleSubmit} className="stepper-form" noValidate>
@@ -424,9 +404,9 @@ export default function CuestionarioPrevioClient() {
                 <div className="section-heading">
                   <span className="section-number">01</span>
                   <div>
-                    <h2>Datos Personales y Encuadre de Admisión</h2>
+                    <h2>Datos Personales</h2>
                     <p className="section-desc">
-                      Usaremos tu DNI para vincular este cuestionario con tu Consentimiento Informado.
+                      Usaremos tu DNI para vincular este Cuestionario Inicial con tu Consentimiento Informado.
                     </p>
                   </div>
                 </div>
@@ -562,80 +542,6 @@ export default function CuestionarioPrevioClient() {
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                     />
                   </div>
-                </div>
-
-                <div className="protocol-box">
-                  <h3>Validación Rápida de Protocolo</h3>
-
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={form.confirmaEdadYNoEmbarazo}
-                      onChange={(e) =>
-                        setForm({ ...form, confirmaEdadYNoEmbarazo: e.target.checked })
-                      }
-                    />
-                    <span>
-                      Confirmo que soy mayor de 14 años y no me encuentro cursando un embarazo.{' '}
-                      <span className="req">*</span>
-                    </span>
-                  </label>
-
-                  <div className="protocol-radio-block">
-                    <span className="field-label-text">
-                      ¿Contás con diagnóstico psiquiátrico severo o tratamiento cardíaco/oncológico en curso?{' '}
-                      <span className="req">*</span>
-                    </span>
-                    <div className="radio-group">
-                      <label
-                        className={`radio-card ${form.diagnosticoSevero === 'Sí' ? 'selected' : ''}`}
-                      >
-                        <input
-                          type="radio"
-                          name="diagnosticoSevero"
-                          value="Sí"
-                          checked={form.diagnosticoSevero === 'Sí'}
-                          onChange={() => setForm({ ...form, diagnosticoSevero: 'Sí' })}
-                        />
-                        <span>Sí</span>
-                      </label>
-                      <label
-                        className={`radio-card ${form.diagnosticoSevero === 'No' ? 'selected' : ''}`}
-                      >
-                        <input
-                          type="radio"
-                          name="diagnosticoSevero"
-                          value="No"
-                          checked={form.diagnosticoSevero === 'No'}
-                          onChange={() =>
-                            setForm({
-                              ...form,
-                              diagnosticoSevero: 'No',
-                              autorizacionMedica: '',
-                            })
-                          }
-                        />
-                        <span>No</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {form.diagnosticoSevero === 'Sí' && (
-                    <div className="field-group" style={{ marginTop: '1rem' }}>
-                      <label htmlFor="autorizacionMedica">
-                        Aclaración sobre autorización médica / psicológica <span className="req">*</span>
-                      </label>
-                      <input
-                        id="autorizacionMedica"
-                        type="text"
-                        placeholder="Indicá si contás con autorización de tu profesional tratante"
-                        value={form.autorizacionMedica}
-                        onChange={(e) =>
-                          setForm({ ...form, autorizacionMedica: e.target.value })
-                        }
-                      />
-                    </div>
-                  )}
                 </div>
               </section>
             )}
@@ -913,7 +819,7 @@ export default function CuestionarioPrevioClient() {
                 </button>
               ) : (
                 <button type="submit" disabled={submitting} className="btn btn-primary">
-                  {submitting ? 'Enviando cuestionario...' : 'Enviar Cuestionario Previo'}
+                  {submitting ? 'Enviando cuestionario...' : 'Enviar Cuestionario Inicial'}
                 </button>
               )}
             </div>
@@ -968,7 +874,6 @@ export default function CuestionarioPrevioClient() {
           line-height: 1.75;
         }
 
-        /* Stepper Progress */
         .stepper-progress {
           background-color: var(--color-secondary);
           border: 1px solid var(--color-secondary-dark);
@@ -1049,7 +954,6 @@ export default function CuestionarioPrevioClient() {
           cursor: pointer;
         }
 
-        /* Form Sections */
         .form-section {
           background-color: var(--background);
           border: 1px solid var(--color-earth-light);
@@ -1107,8 +1011,7 @@ export default function CuestionarioPrevioClient() {
           gap: 0.45rem;
         }
 
-        label,
-        .field-label-text {
+        label {
           font-size: 0.9rem;
           font-weight: 500;
           color: var(--foreground);
@@ -1165,77 +1068,6 @@ export default function CuestionarioPrevioClient() {
           margin-top: 0.25rem;
         }
 
-        .protocol-box {
-          margin-top: 1.75rem;
-          padding: 1.25rem;
-          background-color: var(--color-secondary);
-          border: 1px solid var(--color-secondary-dark);
-          border-left: 3px solid var(--color-primary);
-          border-radius: var(--radius);
-        }
-
-        .protocol-box h3 {
-          font-family: var(--font-serif);
-          font-size: 1.12rem;
-          color: var(--color-primary);
-          margin-bottom: 1rem;
-        }
-
-        .checkbox-label {
-          display: flex;
-          align-items: flex-start;
-          gap: 0.75rem;
-          cursor: pointer;
-          font-weight: 300;
-          margin-bottom: 1.15rem;
-        }
-
-        .checkbox-label input[type='checkbox'] {
-          margin-top: 0.25rem;
-          width: 20px;
-          height: 20px;
-          flex-shrink: 0;
-          accent-color: var(--color-primary);
-        }
-
-        .protocol-radio-block {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-
-        .radio-group {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0.75rem;
-        }
-
-        .radio-card {
-          display: flex;
-          align-items: center;
-          gap: 0.65rem;
-          min-height: 46px;
-          padding: 0.7rem 1rem;
-          background-color: var(--background);
-          border: 1px solid var(--color-earth-light);
-          border-radius: var(--radius);
-          cursor: pointer;
-          font-weight: 400;
-        }
-
-        .radio-card.selected {
-          border-color: var(--color-primary);
-          background-color: rgba(27, 39, 28, 0.05);
-          color: var(--color-primary);
-          font-weight: 500;
-        }
-
-        .radio-card input {
-          accent-color: var(--color-primary);
-          width: 18px;
-          height: 18px;
-        }
-
         .subsection-card {
           background-color: var(--color-secondary);
           border: 1px solid var(--color-secondary-dark);
@@ -1286,7 +1118,7 @@ export default function CuestionarioPrevioClient() {
 
         .confirmation-header {
           text-align: center;
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
         }
 
         .confirmation-badge {
@@ -1309,12 +1141,38 @@ export default function CuestionarioPrevioClient() {
           margin-bottom: 0.75rem;
         }
 
+        .confirmation-header p {
+          max-width: 560px;
+          margin: 0 auto;
+          line-height: 1.7;
+        }
+
+        .confirmation-actions {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 1.75rem;
+        }
+
+        .pdf-optional-btn {
+          background: none;
+          border: none;
+          font-family: var(--font-main);
+          font-size: 0.84rem;
+          color: var(--color-earth);
+          text-decoration: underline;
+          cursor: pointer;
+          padding: 0.25rem 0.5rem;
+        }
+
+        .pdf-optional-btn:hover {
+          color: var(--foreground);
+        }
+
         .summary-box {
           background-color: var(--color-secondary);
           border: 1px solid var(--color-secondary-dark);
           border-radius: var(--radius);
           padding: 1.5rem;
-          margin-bottom: 2rem;
         }
 
         .summary-box h3 {
@@ -1384,12 +1242,6 @@ export default function CuestionarioPrevioClient() {
           margin-top: 1rem;
         }
 
-        .confirmation-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 0.85rem;
-        }
-
         @media (min-width: 640px) {
           .form-section {
             padding: 2.25rem 2.5rem;
@@ -1405,15 +1257,6 @@ export default function CuestionarioPrevioClient() {
 
           .summary-grid {
             grid-template-columns: 1fr 1fr;
-          }
-
-          .summary-item-full {
-            grid-column: 1 / -1;
-          }
-
-          .confirmation-actions {
-            flex-direction: row;
-            justify-content: center;
           }
 
           .confirmation-card {

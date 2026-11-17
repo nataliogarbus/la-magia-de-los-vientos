@@ -1,5 +1,5 @@
 /**
- * Google Apps Script — Consentimiento Informado y Cuestionario Previo (La Magia de los Vientos)
+ * Google Apps Script — Consentimiento Informado y Cuestionario Inicial (La Magia de los Vientos)
  *
  * Instrucciones:
  * 1. Implementar > Nueva implementación > Tipo: Aplicación web.
@@ -10,6 +10,7 @@
  */
 
 const FOLDER_ID = '1Jd7qXlDpc3zRtJbZC6pR6y3mb_oiPjEi';
+const EMAIL_AVISO = 'morgantieliana@gmail.com';
 
 function doPost(e) {
   try {
@@ -28,8 +29,11 @@ function doPost(e) {
     const nombre = (data.nombreCompleto || 'Sin Nombre').trim();
     const dni = (data.dni || 'Sin DNI').trim();
 
-    if (data.tipoDocumento === 'CUESTIONARIO_PREVIO') {
-      return handleCuestionarioPrevio(data, datePrefix, nombre, dni, now);
+    if (
+      data.tipoDocumento === 'CUESTIONARIO_INICIAL' ||
+      data.tipoDocumento === 'CUESTIONARIO_PREVIO'
+    ) {
+      return handleCuestionarioInicial(data, datePrefix, nombre, dni, now);
     }
 
     return handleConsentimiento(data, datePrefix, nombre, dni, now);
@@ -41,7 +45,48 @@ function doPost(e) {
   }
 }
 
+function saveAutorizacionMedica(data, datePrefix, nombre, dni) {
+  if (!data.autorizacionMedicaBase64 || typeof data.autorizacionMedicaBase64 !== 'string') {
+    return null;
+  }
+
+  let mimeType = data.autorizacionMedicaMime || 'application/pdf';
+  const dataUrlMatch = data.autorizacionMedicaBase64.match(/^data:([^;]+);base64,(.+)$/);
+  let base64Clean = data.autorizacionMedicaBase64;
+
+  if (dataUrlMatch) {
+    mimeType = dataUrlMatch[1];
+    base64Clean = dataUrlMatch[2];
+  } else {
+    base64Clean = base64Clean.replace(/^data:[^;]+;base64,/, '');
+  }
+
+  let ext = '.pdf';
+  if (mimeType === 'image/jpeg') ext = '.jpg';
+  else if (mimeType === 'image/png') ext = '.png';
+
+  const fileName = `${datePrefix} - AUTORIZACION MEDICA - ${nombre} (${dni})${ext}`;
+  const bytes = Utilities.base64Decode(base64Clean);
+  const blob = Utilities.newBlob(bytes, mimeType, fileName);
+
+  let file;
+  if (FOLDER_ID && FOLDER_ID !== 'PEGAR_AQUI_EL_ID_DE_LA_CARPETA') {
+    const folder = DriveApp.getFolderById(FOLDER_ID);
+    file = folder.createFile(blob);
+  } else {
+    file = DriveApp.createFile(blob);
+  }
+
+  return {
+    fileId: file.getId(),
+    fileUrl: file.getUrl(),
+    fileName: fileName,
+  };
+}
+
 function handleConsentimiento(data, datePrefix, nombre, dni, now) {
+  const autorizacionArchivo = saveAutorizacionMedica(data, datePrefix, nombre, dni);
+
   const docTitle = `${datePrefix} - ${nombre} (${dni})`;
   const doc = DocumentApp.create(docTitle);
   const body = doc.getBody();
@@ -57,8 +102,9 @@ function handleConsentimiento(data, datePrefix, nombre, dni, now) {
   body.appendHorizontalRule();
 
   // Sección 1: Datos del Consultante
-  const sec1 = body.appendParagraph('1. Datos de Identificación del Consultante');
-  sec1.setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body
+    .appendParagraph('1. Datos de Identificación del Consultante')
+    .setHeading(DocumentApp.ParagraphHeading.HEADING2);
 
   body.appendParagraph(`Nombre y Apellido: ${nombre}`);
   body.appendParagraph(`DNI / Documento: ${dni}`);
@@ -72,18 +118,34 @@ function handleConsentimiento(data, datePrefix, nombre, dni, now) {
     `Motivo de consulta / Observaciones de salud: ${data.observaciones || 'Sin observaciones'}`
   );
 
-  // Sección 2: Declaración de Conformidad
-  const sec2 = body.appendParagraph('2. Declaración de Conformidad y Marco Legal');
-  sec2.setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  // Sección 2: Declaración de Conformidad y Encuadre Ético
+  body
+    .appendParagraph('2. Declaración de Conformidad y Validación de Admisión')
+    .setHeading(DocumentApp.ParagraphHeading.HEADING2);
 
   body.appendParagraph(
     'El/La consultante declara haber leído, comprendido y aceptado en su totalidad los términos del Consentimiento Informado y Descargo de Responsabilidad (naturaleza integrativa del acompañamiento, exclusión de acto médico o psicológico, responsabilidad personal, confidencialidad bajo Ley N° 25.326, modalidad, cancelaciones y prohibición de grabación/reproducción).'
   );
-  body.appendParagraph(`Aceptación expresa: ${data.aceptaTerminos ? 'SÍ' : 'NO'}`);
+  body.appendParagraph(`Aceptación de términos: ${data.aceptaTerminos ? 'SÍ' : 'NO'}`);
+  body.appendParagraph(
+    `Declaración de edad (>14 años), no embarazo y ausencia de diagnósticos psiquiátricos severos impeditivos: ${
+      data.confirmaEncuadreEtico ? 'CONFIRMADO' : 'NO CONFIRMADO'
+    }`
+  );
+  body.appendParagraph(
+    `¿Paciente psiquiátrico (en tratamiento), oncológico o cardíaco?: ${data.pacienteRiesgo || '-'}`
+  );
+
+  if (autorizacionArchivo) {
+    body.appendParagraph(
+      `Autorización Médica / Psicológica adjunta (${autorizacionArchivo.fileName}): ${autorizacionArchivo.fileUrl}`
+    );
+  }
 
   // Sección 3: Firma Digital
-  const sec3 = body.appendParagraph('3. Firma Digital y Registro');
-  sec3.setHeading(DocumentApp.ParagraphHeading.HEADING2);
+  body
+    .appendParagraph('3. Firma Digital y Registro')
+    .setHeading(DocumentApp.ParagraphHeading.HEADING2);
 
   body.appendParagraph(`Aclaración: ${data.aclaracion || nombre}`);
   body.appendParagraph(`Fecha declarada: ${data.fechaFirma || '-'}`);
@@ -109,16 +171,48 @@ function handleConsentimiento(data, datePrefix, nombre, dni, now) {
   doc.saveAndClose();
   moveToTargetFolder(doc.getId());
 
+  const docUrl = doc.getUrl();
+
+  // Aviso automático por email a Eliana
+  const emailLines = [
+    'Hola Eliana,',
+    '',
+    'Un consultante completó y firmó el Paso 1 (Consentimiento Informado) en La Magia de los Vientos:',
+    '',
+    `- Nombre: ${nombre}`,
+    `- DNI: ${dni}`,
+    `- Teléfono / WhatsApp: ${data.telefono || '-'}`,
+    `- Email: ${data.email || '-'}`,
+    `- ¿Tratamiento actual?: ${data.tratamientoActual || '-'}`,
+    `- ¿Paciente psiquiátrico / oncológico / cardíaco?: ${data.pacienteRiesgo || '-'}`,
+    `- Fecha de firma: ${data.timestampArgentina || data.fechaFirma || '-'}`,
+    '',
+    `Documento en Google Drive: ${docUrl}`,
+  ];
+
+  if (autorizacionArchivo) {
+    emailLines.push(
+      `Autorización Médica/Psicológica adjunta: ${autorizacionArchivo.fileUrl}`
+    );
+  }
+
+  MailApp.sendEmail({
+    to: EMAIL_AVISO,
+    subject: `[La Magia de los Vientos] Nuevo Consentimiento Informado - ${nombre} (${dni})`,
+    body: emailLines.join('\n'),
+  });
+
   return jsonResponse({
     ok: true,
     docId: doc.getId(),
-    docUrl: doc.getUrl(),
+    docUrl: docUrl,
     docTitle: docTitle,
+    autorizacionArchivo: autorizacionArchivo,
   });
 }
 
-function handleCuestionarioPrevio(data, datePrefix, nombre, dni, now) {
-  const docTitle = `CUESTIONARIO - ${datePrefix} - ${nombre} (${dni})`;
+function handleCuestionarioInicial(data, datePrefix, nombre, dni, now) {
+  const docTitle = `CUESTIONARIO INICIAL - ${datePrefix} - ${nombre} (${dni})`;
   const doc = DocumentApp.create(docTitle);
   const body = doc.getBody();
 
@@ -126,14 +220,14 @@ function handleCuestionarioPrevio(data, datePrefix, nombre, dni, now) {
   titleParagraph.setHeading(DocumentApp.ParagraphHeading.HEADING1);
 
   const subtitleParagraph = body.appendParagraph(
-    'Cuestionario Previo a la Consulta\nEliana — Acompañamiento en Biodecodificación y Terapias Complementarias'
+    'Cuestionario Inicial\nEliana — Acompañamiento en Biodecodificación y Terapias Complementarias'
   );
   subtitleParagraph.setHeading(DocumentApp.ParagraphHeading.SUBTITLE);
   body.appendHorizontalRule();
 
-  // Sección 1: Datos Personales y Admisión
+  // Sección 1: Datos Personales
   body
-    .appendParagraph('1. Datos Personales y Encuadre de Admisión')
+    .appendParagraph('1. Datos Personales')
     .setHeading(DocumentApp.ParagraphHeading.HEADING2);
   body.appendParagraph(`Nombre y apellido: ${nombre}`);
   body.appendParagraph(`DNI: ${dni}`);
@@ -143,15 +237,6 @@ function handleCuestionarioPrevio(data, datePrefix, nombre, dni, now) {
   body.appendParagraph(`Ocupación / profesión: ${data.ocupacion || '-'}`);
   body.appendParagraph(`Teléfono / WhatsApp: ${data.telefono || '-'}`);
   body.appendParagraph(`Correo electrónico: ${data.email || '-'}`);
-  body.appendParagraph(
-    `Mayor de 14 años y sin embarazo en curso: ${data.confirmaEdadYNoEmbarazo ? 'Confirmado' : 'No confirmado'}`
-  );
-  body.appendParagraph(
-    `Diagnóstico psiquiátrico severo o tratamiento cardíaco/oncológico: ${data.diagnosticoSevero || '-'}`
-  );
-  if (data.autorizacionMedica) {
-    body.appendParagraph(`Autorización médica/psicológica: ${data.autorizacionMedica}`);
-  }
 
   // Sección 2: Tema a Trabajar
   body
@@ -226,10 +311,34 @@ function handleCuestionarioPrevio(data, datePrefix, nombre, dni, now) {
   doc.saveAndClose();
   moveToTargetFolder(doc.getId());
 
+  const docUrl = doc.getUrl();
+
+  // Aviso automático por email a Eliana
+  const emailLines = [
+    'Hola Eliana,',
+    '',
+    'Un consultante completó el Paso 2 (Cuestionario Inicial) en La Magia de los Vientos:',
+    '',
+    `- Nombre: ${nombre}`,
+    `- DNI: ${dni}`,
+    `- Teléfono / WhatsApp: ${data.telefono || '-'}`,
+    `- Email: ${data.email || '-'}`,
+    `- Tema principal: ${data.temaPrincipal || '-'}`,
+    `- Fecha de envío: ${data.timestampArgentina || '-'}`,
+    '',
+    `Cuestionario en Google Drive: ${docUrl}`,
+  ];
+
+  MailApp.sendEmail({
+    to: EMAIL_AVISO,
+    subject: `[La Magia de los Vientos] Nuevo Cuestionario Inicial - ${nombre} (${dni})`,
+    body: emailLines.join('\n'),
+  });
+
   return jsonResponse({
     ok: true,
     docId: doc.getId(),
-    docUrl: doc.getUrl(),
+    docUrl: docUrl,
     docTitle: docTitle,
   });
 }

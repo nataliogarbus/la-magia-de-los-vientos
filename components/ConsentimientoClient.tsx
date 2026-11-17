@@ -12,6 +12,11 @@ interface FormState {
   tratamientoActual: '' | 'Sí' | 'No';
   observaciones: string;
   aceptaTerminos: boolean;
+  confirmaEncuadreEtico: boolean;
+  pacienteRiesgo: '' | 'Sí' | 'No';
+  autorizacionMedicaBase64: string;
+  autorizacionMedicaNombre: string;
+  autorizacionMedicaMime: string;
   aclaracion: string;
 }
 
@@ -40,6 +45,11 @@ export default function ConsentimientoClient() {
     tratamientoActual: '',
     observaciones: '',
     aceptaTerminos: false,
+    confirmaEncuadreEtico: false,
+    pacienteRiesgo: '',
+    autorizacionMedicaBase64: '',
+    autorizacionMedicaNombre: '',
+    autorizacionMedicaMime: '',
     aclaracion: '',
   });
 
@@ -136,6 +146,46 @@ export default function ConsentimientoClient() {
     setHasSignature(false);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setForm((prev) => ({
+        ...prev,
+        autorizacionMedicaBase64: '',
+        autorizacionMedicaNombre: '',
+        autorizacionMedicaMime: '',
+      }));
+      return;
+    }
+
+    const maxBytes = 5 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setErrorMsg('El archivo de autorización supera el máximo permitido de 5 MB.');
+      e.target.value = '';
+      return;
+    }
+
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.type)) {
+      setErrorMsg('Formato no permitido. Subí un archivo PDF, JPG o PNG.');
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      setForm((prev) => ({
+        ...prev,
+        autorizacionMedicaBase64: result,
+        autorizacionMedicaNombre: file.name,
+        autorizacionMedicaMime: file.type,
+      }));
+      setErrorMsg(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
@@ -147,6 +197,21 @@ export default function ConsentimientoClient() {
 
     if (!form.aceptaTerminos) {
       setErrorMsg('Debés aceptar los términos del Consentimiento Informado para continuar.');
+      return;
+    }
+
+    if (!form.confirmaEncuadreEtico) {
+      setErrorMsg('Debés confirmar la declaración de admisión y encuadre ético (mayor de 14 años, sin embarazo ni diagnósticos impeditivos).');
+      return;
+    }
+
+    if (!form.pacienteRiesgo) {
+      setErrorMsg('Por favor, indicá si sos paciente psiquiátrico (en tratamiento), oncológico o cardíaco.');
+      return;
+    }
+
+    if (form.pacienteRiesgo === 'Sí' && !form.autorizacionMedicaBase64) {
+      setErrorMsg('Como indicaste tratamiento psiquiátrico, oncológico o cardíaco, es obligatorio adjuntar la Autorización Médica / Psicológica (PDF, JPG o PNG).');
       return;
     }
 
@@ -190,17 +255,19 @@ export default function ConsentimientoClient() {
     }
   };
 
-  const whatsappUrl = submittedData
-    ? `https://wa.me/5491149143734?text=${encodeURIComponent(
-        `Hola Eliana, completé y firmé el Consentimiento Informado.\n\nNombre: ${submittedData.nombreCompleto}\nDNI: ${submittedData.dni}\nFecha: ${submittedData.fechaFirma}`
-      )}`
-    : '';
+  const cuestionarioUrl = submittedData
+    ? `/cuestionario-inicial?nombre=${encodeURIComponent(
+        submittedData.nombreCompleto
+      )}&dni=${encodeURIComponent(submittedData.dni)}&email=${encodeURIComponent(
+        submittedData.email
+      )}&telefono=${encodeURIComponent(submittedData.telefono)}`
+    : '/cuestionario-inicial';
 
   return (
     <main className="consent-page">
       <div className="container consent-container">
         <header className="consent-header">
-          <span className="consent-badge">Documento Privado · Uso Terapéutico</span>
+          <span className="consent-badge">Paso 1 de 2 · Admisión Terapéutica</span>
           <h1>Consentimiento Informado</h1>
           <p className="consent-subtitle">
             La Magia de los Vientos · Eliana — Acompañamiento en Biodecodificación y Terapias Complementarias
@@ -210,11 +277,26 @@ export default function ConsentimientoClient() {
         {submittedData ? (
           <section className="confirmation-card" aria-live="polite">
             <div className="confirmation-header">
-              <span className="confirmation-badge">Registro Confirmado</span>
+              <span className="confirmation-badge">
+                Paso 1 de 2 completado
+              </span>
               <h2>Consentimiento Firmado con Éxito</h2>
               <p>
-                Gracias, <strong>{submittedData.nombreCompleto}</strong>. Tu declaración de conformidad quedó registrada correctamente. Podés guardar una copia en PDF y avisar a Eliana por WhatsApp.
+                Gracias, <strong>{submittedData.nombreCompleto}</strong>. Paso 1 de 2 completado — Para finalizar tu admisión, continuá con el Cuestionario Inicial.
               </p>
+            </div>
+
+            <div className="confirmation-actions primary-step-cta no-print">
+              <Link href={cuestionarioUrl} className="btn btn-primary btn-protagonist">
+                CONTINUAR AL PASO 2: CUESTIONARIO INICIAL
+              </Link>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="pdf-optional-btn"
+              >
+                Imprimir / Guardar copia en PDF (Opcional)
+              </button>
             </div>
 
             <div className="summary-box">
@@ -273,27 +355,6 @@ export default function ConsentimientoClient() {
               <p className="legal-print-note">
                 El/La consultante declaró haber leído, comprendido y aceptado en su totalidad los términos del Consentimiento Informado y Descargo de Responsabilidad de La Magia de los Vientos (Ley N° 25.326).
               </p>
-            </div>
-
-            <div className="confirmation-actions no-print">
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="btn btn-outline"
-              >
-                Imprimir / Guardar copia en PDF
-              </button>
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-              >
-                Avisar a Eliana por WhatsApp
-              </a>
-              <Link href="/cuestionario-previo" className="btn btn-secondary">
-                Completar Cuestionario Previo ahora
-              </Link>
             </div>
           </section>
         ) : (
@@ -538,6 +599,89 @@ export default function ConsentimientoClient() {
                     He leído, comprendido y acepto en su totalidad los términos del Consentimiento Informado y Descargo de Responsabilidad aquí detallados. Declaro que los datos ingresados son verídicos y que inicio este proceso de acompañamiento de manera libre y voluntaria.
                   </span>
                 </label>
+              </div>
+
+              <div className="admission-box">
+                <h3>Validación de Admisión y Encuadre Ético</h3>
+
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={form.confirmaEncuadreEtico}
+                    onChange={(e) =>
+                      setForm({ ...form, confirmaEncuadreEtico: e.target.checked })
+                    }
+                    required
+                  />
+                  <span>
+                    Declaro ser mayor de 14 años, no encontrarme cursando un embarazo, y no poseer retrasos madurativos ni diagnósticos psiquiátricos severos (Bipolaridad, Trastorno de personalidad, Esquizofrenia, Trastornos severos del estado de ánimo o Estrés post-traumático), los cuales constituyen impedimentos bajo el Método Comprender para Sanar.{' '}
+                    <span className="req">*</span>
+                  </span>
+                </label>
+
+                <div className="admission-radio-block">
+                  <span className="field-label-text">
+                    ¿Sos paciente psiquiátrico (en tratamiento), oncológico o cardíaco?{' '}
+                    <span className="req">*</span>
+                  </span>
+                  <div className="radio-group" role="radiogroup" aria-label="Paciente de riesgo">
+                    <label
+                      className={`radio-card ${form.pacienteRiesgo === 'Sí' ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="pacienteRiesgo"
+                        value="Sí"
+                        checked={form.pacienteRiesgo === 'Sí'}
+                        onChange={() => setForm({ ...form, pacienteRiesgo: 'Sí' })}
+                      />
+                      <span>Sí</span>
+                    </label>
+                    <label
+                      className={`radio-card ${form.pacienteRiesgo === 'No' ? 'selected' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="pacienteRiesgo"
+                        value="No"
+                        checked={form.pacienteRiesgo === 'No'}
+                        onChange={() =>
+                          setForm({
+                            ...form,
+                            pacienteRiesgo: 'No',
+                            autorizacionMedicaBase64: '',
+                            autorizacionMedicaNombre: '',
+                            autorizacionMedicaMime: '',
+                          })
+                        }
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </div>
+
+                {form.pacienteRiesgo === 'Sí' && (
+                  <div className="file-upload-box">
+                    <p className="admission-alert">
+                      Para tomar sesiones bajo tratamiento psiquiátrico, oncológico o cardíaco es requisito indispensable adjuntar la <strong>Autorización Médica o Psicológica</strong> de tu profesional tratante.
+                    </p>
+                    <label htmlFor="autorizacionMedicaFile">
+                      Adjuntar Autorización Médica / Psicológica (PDF, JPG o PNG · máx. 5 MB){' '}
+                      <span className="req">*</span>
+                    </label>
+                    <input
+                      id="autorizacionMedicaFile"
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleFileChange}
+                    />
+                    {form.autorizacionMedicaNombre && (
+                      <p className="file-attached-name">
+                        Archivo cargado: <strong>{form.autorizacionMedicaNombre}</strong>
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="signature-block">
@@ -1109,6 +1253,87 @@ export default function ConsentimientoClient() {
           .confirmation-card {
             padding: 2.75rem 2.5rem;
           }
+        }
+
+        .admission-box {
+          background-color: var(--color-secondary);
+          border: 1px solid var(--color-secondary-dark);
+          border-left: 3px solid var(--color-primary);
+          border-radius: var(--radius);
+          padding: 1.25rem;
+          margin-bottom: 1.75rem;
+        }
+
+        .admission-box h3 {
+          font-family: var(--font-serif);
+          font-size: 1.15rem;
+          color: var(--color-primary);
+          margin-bottom: 1rem;
+        }
+
+        .admission-radio-block {
+          margin-top: 1.15rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.45rem;
+        }
+
+        .file-upload-box {
+          margin-top: 1.15rem;
+          padding: 1rem;
+          background-color: var(--background);
+          border: 1px solid var(--color-earth-light);
+          border-radius: var(--radius);
+          display: flex;
+          flex-direction: column;
+          gap: 0.65rem;
+        }
+
+        .admission-alert {
+          font-size: 0.88rem;
+          color: var(--color-primary);
+          line-height: 1.55;
+        }
+
+        .file-upload-box input[type='file'] {
+          font-family: var(--font-main);
+          font-size: 0.88rem;
+          color: var(--foreground);
+        }
+
+        .file-attached-name {
+          font-size: 0.85rem;
+          color: var(--color-primary);
+        }
+
+        .primary-step-cta {
+          flex-direction: column !important;
+          align-items: center;
+          margin-bottom: 2rem;
+          gap: 0.9rem;
+        }
+
+        .btn-protagonist {
+          width: 100%;
+          max-width: 460px;
+          padding: 1.05rem 1.75rem;
+          font-size: 0.85rem;
+          text-align: center;
+        }
+
+        .pdf-optional-btn {
+          background: none;
+          border: none;
+          font-family: var(--font-main);
+          font-size: 0.82rem;
+          color: var(--color-earth);
+          text-decoration: underline;
+          cursor: pointer;
+          padding: 0.25rem 0.5rem;
+        }
+
+        .pdf-optional-btn:hover {
+          color: var(--foreground);
         }
 
         @media print {
