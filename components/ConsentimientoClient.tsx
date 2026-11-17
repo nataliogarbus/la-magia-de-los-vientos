@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 interface FormState {
@@ -290,6 +291,9 @@ export default function ConsentimientoClient() {
               >
                 Avisar a Eliana por WhatsApp
               </a>
+              <Link href="/cuestionario-previo" className="btn btn-secondary">
+                Completar Cuestionario Previo ahora
+              </Link>
             </div>
           </section>
         ) : (
