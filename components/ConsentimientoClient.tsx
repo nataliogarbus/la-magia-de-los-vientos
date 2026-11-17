@@ -241,6 +241,22 @@ export default function ConsentimientoClient() {
         return;
       }
 
+      try {
+        sessionStorage.setItem(
+          'lamagia_admision_paso1',
+          JSON.stringify({
+            nombreCompleto: form.nombreCompleto.trim(),
+            dni: form.dni.trim(),
+            fechaNacimiento: form.fechaNacimiento.trim(),
+            email: form.email.trim(),
+            telefono: form.telefono.trim(),
+            timestampArgentina: data.timestampArgentina || fechaFirma,
+          })
+        );
+      } catch {
+        // Ignorar si sessionStorage no está disponible
+      }
+
       setSubmittedData({
         ...form,
         fechaFirma,
@@ -267,7 +283,7 @@ export default function ConsentimientoClient() {
     <main className="consent-page">
       <div className="container consent-container">
         <header className="consent-header">
-          <span className="consent-badge">Paso 1 de 2 · Admisión Terapéutica</span>
+          <span className="consent-badge">Paso 1 de 3 · Admisión Terapéutica</span>
           <h1>Consentimiento Informado</h1>
           <p className="consent-subtitle">
             La Magia de los Vientos · Eliana — Acompañamiento en Biodecodificación y Terapias Complementarias
@@ -278,11 +294,11 @@ export default function ConsentimientoClient() {
           <section className="confirmation-card" aria-live="polite">
             <div className="confirmation-header">
               <span className="confirmation-badge">
-                Paso 1 de 2 completado
+                Paso 1 de 3 completado
               </span>
               <h2>Consentimiento Firmado con Éxito</h2>
               <p>
-                Gracias, <strong>{submittedData.nombreCompleto}</strong>. Paso 1 de 2 completado — Para finalizar tu admisión, continuá con el Cuestionario Inicial.
+                Gracias, <strong>{submittedData.nombreCompleto}</strong>. Paso 1 de 3 completado — Para continuar con tu admisión, completá el Cuestionario Inicial.
               </p>
             </div>
 

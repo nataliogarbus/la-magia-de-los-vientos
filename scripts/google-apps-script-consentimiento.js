@@ -30,6 +30,13 @@ function doPost(e) {
     const dni = (data.dni || 'Sin DNI').trim();
 
     if (
+      data.tipo === 'comprobante_pago' ||
+      data.tipoDocumento === 'COMPROBANTE_PAGO'
+    ) {
+      return handleComprobantePago(data, datePrefix, nombre, dni, now);
+    }
+
+    if (
       data.tipoDocumento === 'CUESTIONARIO_INICIAL' ||
       data.tipoDocumento === 'CUESTIONARIO_PREVIO'
     ) {
@@ -340,6 +347,71 @@ function handleCuestionarioInicial(data, datePrefix, nombre, dni, now) {
     docId: doc.getId(),
     docUrl: docUrl,
     docTitle: docTitle,
+  });
+}
+
+function handleComprobantePago(data, datePrefix, nombre, dni, now) {
+  if (!data.comprobanteBase64 || typeof data.comprobanteBase64 !== 'string') {
+    return jsonResponse({ ok: false, error: 'Comprobante vacío' });
+  }
+
+  let mimeType = data.comprobanteMime || 'application/pdf';
+  const dataUrlMatch = data.comprobanteBase64.match(/^data:([^;]+);base64,(.+)$/);
+  let base64Clean = data.comprobanteBase64;
+
+  if (dataUrlMatch) {
+    mimeType = dataUrlMatch[1];
+    base64Clean = dataUrlMatch[2];
+  } else {
+    base64Clean = base64Clean.replace(/^data:[^;]+;base64,/, '');
+  }
+
+  let ext = '.pdf';
+  if (mimeType === 'image/jpeg') ext = '.jpg';
+  else if (mimeType === 'image/png') ext = '.png';
+  else if (mimeType === 'image/webp') ext = '.webp';
+
+  const fileName = `${datePrefix} - COMPROBANTE PAGO - ${nombre} (${dni})${ext}`;
+  const bytes = Utilities.base64Decode(base64Clean);
+  const blob = Utilities.newBlob(bytes, mimeType, fileName);
+
+  let file;
+  if (FOLDER_ID && FOLDER_ID !== 'PEGAR_AQUI_EL_ID_DE_LA_CARPETA') {
+    const folder = DriveApp.getFolderById(FOLDER_ID);
+    file = folder.createFile(blob);
+  } else {
+    file = DriveApp.createFile(blob);
+  }
+
+  const fileUrl = file.getUrl();
+
+  const emailLines = [
+    'Hola Eliana,',
+    '',
+    'Un consultante subió un comprobante de pago en el Paso 3 (La Magia de los Vientos):',
+    '',
+    `- Nombre: ${nombre}`,
+    `- DNI: ${dni}`,
+    `- Teléfono / WhatsApp: ${data.telefono || '-'}`,
+    `- Email: ${data.email || '-'}`,
+    `- Modalidad: ${data.modalidadPago || '-'}`,
+    `- Referencia declarada: ${data.referencia || 'No informada'}`,
+    `- Fecha de envío: ${data.timestampArgentina || now.toISOString()}`,
+    '',
+    `Comprobante en Google Drive: ${fileUrl}`,
+  ];
+
+  MailApp.sendEmail({
+    to: EMAIL_AVISO,
+    subject: `[La Magia de los Vientos] Comprobante de Pago - ${nombre} (${dni})`,
+    body: emailLines.join('\n'),
+  });
+
+  return jsonResponse({
+    ok: true,
+    fileId: file.getId(),
+    fileUrl: fileUrl,
+    fileName: fileName,
   });
 }
 

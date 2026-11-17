@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
@@ -43,9 +44,24 @@ const STEPS = [
   { id: 4, title: 'Logros, Duelos y Miedos' },
 ];
 
+function computeAge(dateVal: string): string {
+  if (!dateVal) return '';
+  const birth = new Date(`${dateVal}T00:00:00`);
+  if (Number.isNaN(birth.getTime())) return '';
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age > 0 && age < 120 ? String(age) : '';
+}
+
 export default function CuestionarioInicialClient() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
+  const [paso1Loaded, setPaso1Loaded] = useState(false);
+  const [paso1Missing, setPaso1Missing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<SubmittedCuestionario | null>(null);
@@ -76,38 +92,53 @@ export default function CuestionarioInicialClient() {
   });
 
   useEffect(() => {
-    const nombre = searchParams.get('nombre') || '';
-    const dni = searchParams.get('dni') || '';
-    const email = searchParams.get('email') || '';
-    const telefono = searchParams.get('telefono') || '';
-
-    if (nombre || dni || email || telefono) {
-      setForm((prev) => ({
-        ...prev,
-        nombreCompleto: prev.nombreCompleto || nombre,
-        dni: prev.dni || dni,
-        email: prev.email || email,
-        telefono: prev.telefono || telefono,
-      }));
+    let loaded = false;
+    try {
+      const raw = sessionStorage.getItem('lamagia_admision_paso1');
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<CuestionarioState>;
+        if (parsed.nombreCompleto && parsed.dni) {
+          loaded = true;
+          const fechaNac = parsed.fechaNacimiento || '';
+          setForm((prev) => ({
+            ...prev,
+            nombreCompleto: parsed.nombreCompleto || prev.nombreCompleto,
+            dni: parsed.dni || prev.dni,
+            fechaNacimiento: fechaNac || prev.fechaNacimiento,
+            edad: prev.edad || computeAge(fechaNac),
+            email: parsed.email || prev.email,
+            telefono: parsed.telefono || prev.telefono,
+          }));
+        }
+      }
+    } catch {
+      // Ignorar errores de sessionStorage
     }
+
+    if (!loaded) {
+      const nombre = searchParams.get('nombre') || '';
+      const dni = searchParams.get('dni') || '';
+      const email = searchParams.get('email') || '';
+      const telefono = searchParams.get('telefono') || '';
+      const fechaNacimiento = searchParams.get('fechaNacimiento') || '';
+
+      if (nombre && dni && email && telefono) {
+        loaded = true;
+        setForm((prev) => ({
+          ...prev,
+          nombreCompleto: nombre,
+          dni,
+          fechaNacimiento,
+          edad: prev.edad || computeAge(fechaNacimiento),
+          email,
+          telefono,
+        }));
+      }
+    }
+
+    setPaso1Loaded(true);
+    setPaso1Missing(!loaded);
   }, [searchParams]);
-
-  const handleDateChange = (dateVal: string) => {
-    let computedEdad = form.edad;
-    if (dateVal) {
-      const birth = new Date(`${dateVal}T00:00:00`);
-      const today = new Date();
-      let age = today.getFullYear() - birth.getFullYear();
-      const m = today.getMonth() - birth.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-        age--;
-      }
-      if (age > 0 && age < 120) {
-        computedEdad = String(age);
-      }
-    }
-    setForm({ ...form, fechaNacimiento: dateVal, edad: computedEdad });
-  };
 
   const validateStep = (targetStep: number): string | null => {
     if (targetStep === 1) {
@@ -185,6 +216,18 @@ export default function CuestionarioInicialClient() {
         return;
       }
 
+      try {
+        sessionStorage.setItem(
+          'lamagia_admision_paso2',
+          JSON.stringify({
+            completedAt: data.timestampISO || new Date().toISOString(),
+            timestampArgentina: data.timestampArgentina || '',
+          })
+        );
+      } catch {
+        // Ignorar si sessionStorage no está disponible
+      }
+
       setSubmittedData({
         ...form,
         timestampArgentina: data.timestampArgentina || '',
@@ -203,24 +246,42 @@ export default function CuestionarioInicialClient() {
     <main className="cuestionario-page">
       <div className="container cuestionario-container">
         <header className="cuestionario-header">
-          <span className="cuestionario-badge">Paso 2 de 2 · Confidencial</span>
+          <span className="cuestionario-badge">Paso 2 de 3 · Confidencial</span>
           <h1>Cuestionario Inicial</h1>
           <p className="cuestionario-intro">
             Hola: este cuestionario me permitirá conocer mejor tu historia antes de nuestro encuentro y aprovechar al máximo el tiempo de sesión. Tómate un momento tranquilo para responder con total sinceridad; toda la información es estrictamente confidencial. Por favor, envíamelo completo al menos 48 horas antes de vernos.
           </p>
         </header>
 
-        {submittedData ? (
+        {paso1Loaded && paso1Missing && !submittedData ? (
           <section className="confirmation-card" aria-live="polite">
             <div className="confirmation-header">
-              <span className="confirmation-badge">Admisión Completada</span>
-              <h2>¡Documentación Recibida, {submittedData.nombreCompleto}!</h2>
+              <span className="confirmation-badge">Paso 1 Requerido</span>
+              <h2>Completá primero tu Consentimiento Informado</h2>
               <p>
-                Tu Cuestionario Inicial fue registrado con éxito. <strong>Eliana ya recibió automáticamente toda la documentación en su sistema</strong> y no necesitás realizar ningún envío adicional.
+                Para agilizar tu admisión y no volver a pedirte tus datos personales, primero debés completar y firmar el <strong>Paso 1 (Consentimiento Informado)</strong>.
+              </p>
+            </div>
+            <div className="confirmation-actions primary-step-cta">
+              <Link href="/consentimiento" className="btn btn-primary btn-protagonist">
+                IR AL PASO 1: CONSENTIMIENTO INFORMADO
+              </Link>
+            </div>
+          </section>
+        ) : submittedData ? (
+          <section className="confirmation-card" aria-live="polite">
+            <div className="confirmation-header">
+              <span className="confirmation-badge">Paso 2 de 3 completado</span>
+              <h2>¡Cuestionario Recibido, {submittedData.nombreCompleto}!</h2>
+              <p>
+                Tu Cuestionario Inicial fue guardado correctamente en el sistema de Eliana. Para confirmar tu turno, continuá al <strong>Paso 3: Pago y Confirmación</strong>.
               </p>
             </div>
 
-            <div className="confirmation-actions no-print">
+            <div className="confirmation-actions primary-step-cta no-print">
+              <Link href="/pago-sesion" className="btn btn-primary btn-protagonist">
+                CONTINUAR AL PASO 3: PAGO Y CONFIRMACIÓN
+              </Link>
               <button
                 type="button"
                 onClick={() => window.print()}
@@ -411,49 +472,61 @@ export default function CuestionarioInicialClient() {
                   </div>
                 </div>
 
+                <div className="paso1-summary-card">
+                  <div className="paso1-summary-top">
+                    <span className="paso1-summary-title">Datos importados del Paso 1</span>
+                    <Link href="/consentimiento" className="edit-paso1-link">
+                      Editar datos del Paso 1
+                    </Link>
+                  </div>
+                  <div className="paso1-summary-grid">
+                    <div>
+                      <span className="summary-label">Nombre y apellido</span>
+                      <span className="summary-value">{form.nombreCompleto}</span>
+                    </div>
+                    <div>
+                      <span className="summary-label">DNI</span>
+                      <span className="summary-value">{form.dni}</span>
+                    </div>
+                    {form.fechaNacimiento && (
+                      <div>
+                        <span className="summary-label">Fecha de nacimiento</span>
+                        <span className="summary-value">{form.fechaNacimiento}</span>
+                      </div>
+                    )}
+                    <div>
+                      <span className="summary-label">Teléfono / WhatsApp</span>
+                      <span className="summary-value">{form.telefono}</span>
+                    </div>
+                    <div>
+                      <span className="summary-label">Correo electrónico</span>
+                      <span className="summary-value">{form.email}</span>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="fields-grid">
-                  <div className="field-group field-full">
-                    <label htmlFor="nombreCompleto">
-                      Nombre y apellido <span className="req">*</span>
-                    </label>
-                    <input
-                      id="nombreCompleto"
-                      type="text"
-                      required
-                      autoComplete="name"
-                      placeholder="Ej: María Laura Fernández"
-                      value={form.nombreCompleto}
-                      onChange={(e) => setForm({ ...form, nombreCompleto: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label htmlFor="dni">
-                      DNI <span className="req">*</span>
-                    </label>
-                    <input
-                      id="dni"
-                      type="text"
-                      required
-                      inputMode="numeric"
-                      placeholder="Ej: 34.567.890"
-                      value={form.dni}
-                      onChange={(e) => setForm({ ...form, dni: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label htmlFor="fechaNacimiento">
-                      Fecha de nacimiento <span className="req">*</span>
-                    </label>
-                    <input
-                      id="fechaNacimiento"
-                      type="date"
-                      required
-                      value={form.fechaNacimiento}
-                      onChange={(e) => handleDateChange(e.target.value)}
-                    />
-                  </div>
+                  {!form.fechaNacimiento && (
+                    <div className="field-group">
+                      <label htmlFor="fechaNacimiento">
+                        Fecha de nacimiento <span className="req">*</span>
+                      </label>
+                      <input
+                        id="fechaNacimiento"
+                        type="date"
+                        required
+                        value={form.fechaNacimiento}
+                        onChange={(e) => {
+                          const dateVal = e.target.value;
+                          setForm({
+                            ...form,
+                            fechaNacimiento: dateVal,
+                            edad: form.edad || computeAge(dateVal),
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
 
                   <div className="field-group">
                     <label htmlFor="edad">
@@ -510,36 +583,6 @@ export default function CuestionarioInicialClient() {
                       placeholder="Ciudad / Provincia"
                       value={form.lugarResidencia}
                       onChange={(e) => setForm({ ...form, lugarResidencia: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label htmlFor="telefono">
-                      Teléfono / WhatsApp <span className="req">*</span>
-                    </label>
-                    <input
-                      id="telefono"
-                      type="tel"
-                      required
-                      autoComplete="tel"
-                      placeholder="Ej: +54 9 11 1234-5678"
-                      value={form.telefono}
-                      onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="field-group">
-                    <label htmlFor="email">
-                      Correo electrónico <span className="req">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      placeholder="nombre@ejemplo.com"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
                     />
                   </div>
                 </div>
@@ -1281,6 +1324,70 @@ export default function CuestionarioInicialClient() {
             box-shadow: none;
             padding: 0;
           }
+        }
+
+        .paso1-summary-card {
+          background-color: var(--color-secondary);
+          border: 1px solid var(--color-secondary-dark);
+          border-left: 3px solid var(--color-primary);
+          border-radius: var(--radius);
+          padding: 1.15rem 1.25rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .paso1-summary-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          margin-bottom: 0.9rem;
+          padding-bottom: 0.65rem;
+          border-bottom: 1px solid var(--color-earth-light);
+        }
+
+        .paso1-summary-title {
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: var(--color-primary);
+        }
+
+        .edit-paso1-link {
+          font-size: 0.8rem;
+          color: var(--color-earth);
+          text-decoration: underline;
+        }
+
+        .edit-paso1-link:hover {
+          color: var(--foreground);
+        }
+
+        .paso1-summary-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+          gap: 0.75rem 1.25rem;
+        }
+
+        .paso1-summary-grid > div {
+          display: flex;
+          flex-direction: column;
+          gap: 0.1rem;
+        }
+
+        .primary-step-cta {
+          flex-direction: column;
+          align-items: center;
+          gap: 0.9rem;
+        }
+
+        .btn-protagonist {
+          width: 100%;
+          max-width: 460px;
+          padding: 1.05rem 1.75rem;
+          font-size: 0.85rem;
+          text-align: center;
         }
       `}</style>
     </main>
