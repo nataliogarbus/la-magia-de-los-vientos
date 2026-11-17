@@ -103,9 +103,14 @@ export default function TiendaPage() {
                 <span className="custom-price">$25.000</span>
                 <span className="custom-price-label">/ sesión completa</span>
               </div>
-              <Link href="/reservas" className="btn btn-primary">
+              <a
+                href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
                 Agendar Consultoría
-              </Link>
+              </a>
             </div>
           </div>
         </div>

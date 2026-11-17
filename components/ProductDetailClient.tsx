@@ -58,9 +58,14 @@ export default function ProductDetailClient({ product, related }: Props) {
             <a href={waLink} target="_blank" rel="noopener noreferrer" className="btn btn-primary btn-wa">
               Consultar por WhatsApp
             </a>
-            <Link href="/reservas" className="btn btn-secondary">
+            <a
+              href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+            >
               Agendar Sesión Personalizada
-            </Link>
+            </a>
           </div>
 
           <div className="product-divider" />

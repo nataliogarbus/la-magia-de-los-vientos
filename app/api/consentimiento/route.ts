@@ -1,5 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const MAX_SHORT_TEXT = 200;
+const MAX_LONG_TEXT = 4000;
+const MAX_AUTH_FILE_BASE64_LENGTH = 6 * 1024 * 1024; // 6 MB codificados
+const MAX_SIGNATURE_BASE64_LENGTH = 2 * 1024 * 1024; // 2 MB
+const ALLOWED_AUTH_DATA_URL_REGEX =
+  /^data:(application\/pdf|image\/jpeg|image\/png|image\/webp);base64,[A-Za-z0-9+/=]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function sanitizeText(value: unknown, maxLength: number): string {
+  if (typeof value !== 'string') return '';
+  return value
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    .trim()
+    .slice(0, maxLength);
+}
+
 interface ConsentimientoPayload {
   nombreCompleto: string;
   dni: string;
@@ -21,27 +37,44 @@ interface ConsentimientoPayload {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Partial<ConsentimientoPayload>;
+    const rawBody = await request.json();
+    if (!rawBody || typeof rawBody !== 'object' || Array.isArray(rawBody)) {
+      return NextResponse.json(
+        { ok: false, error: 'Formato de solicitud inválido.' },
+        { status: 400 }
+      );
+    }
 
-    const requiredFields: (keyof ConsentimientoPayload)[] = [
-      'nombreCompleto',
-      'dni',
-      'fechaNacimiento',
-      'email',
-      'telefono',
-      'tratamientoActual',
-      'aclaracion',
-      'firmaBase64',
-    ];
+    const body = rawBody as Partial<ConsentimientoPayload>;
 
-    for (const field of requiredFields) {
-      const value = body[field];
-      if (typeof value !== 'string' || value.trim().length === 0) {
-        return NextResponse.json(
-          { ok: false, error: `El campo "${field}" es obligatorio.` },
-          { status: 400 }
-        );
-      }
+    const nombreCompleto = sanitizeText(body.nombreCompleto, MAX_SHORT_TEXT);
+    const dni = sanitizeText(body.dni, 50);
+    const fechaNacimiento = sanitizeText(body.fechaNacimiento, 30);
+    const email = sanitizeText(body.email, MAX_SHORT_TEXT);
+    const telefono = sanitizeText(body.telefono, 50);
+    const observaciones = sanitizeText(body.observaciones, MAX_LONG_TEXT);
+    const aclaracion = sanitizeText(body.aclaracion, MAX_SHORT_TEXT);
+    const fechaFirmaInput = sanitizeText(body.fechaFirma, 50);
+
+    if (
+      !nombreCompleto ||
+      !dni ||
+      !fechaNacimiento ||
+      !email ||
+      !telefono ||
+      !aclaracion
+    ) {
+      return NextResponse.json(
+        { ok: false, error: 'Completá todos los campos obligatorios.' },
+        { status: 400 }
+      );
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      return NextResponse.json(
+        { ok: false, error: 'El correo electrónico ingresado no es válido.' },
+        { status: 400 }
+      );
     }
 
     if (body.aceptaTerminos !== true) {
@@ -78,22 +111,51 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let autorizacionMedicaBase64 = '';
+    let autorizacionMedicaNombre = '';
+    let autorizacionMedicaMime = '';
+
     if (body.pacienteRiesgo === 'Sí') {
-      if (
-        !body.autorizacionMedicaBase64 ||
-        !body.autorizacionMedicaBase64.startsWith('data:')
-      ) {
+      if (typeof body.autorizacionMedicaBase64 !== 'string') {
         return NextResponse.json(
           {
             ok: false,
-            error: 'Debe adjuntar la autorización médica o psicológica en formato PDF, JPG o PNG.',
+            error: 'Debe adjuntar la autorización médica o psicológica.',
           },
           { status: 400 }
         );
       }
+
+      if (body.autorizacionMedicaBase64.length > MAX_AUTH_FILE_BASE64_LENGTH) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'El archivo adjunto supera el límite máximo permitido.',
+          },
+          { status: 400 }
+        );
+      }
+
+      if (!ALLOWED_AUTH_DATA_URL_REGEX.test(body.autorizacionMedicaBase64)) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Formato de autorización no permitido. Usá PDF, JPG, PNG o WEBP.',
+          },
+          { status: 400 }
+        );
+      }
+
+      autorizacionMedicaBase64 = body.autorizacionMedicaBase64;
+      autorizacionMedicaNombre = sanitizeText(body.autorizacionMedicaNombre, MAX_SHORT_TEXT);
+      autorizacionMedicaMime = sanitizeText(body.autorizacionMedicaMime, 100);
     }
 
-    if (!body.firmaBase64?.startsWith('data:image/png;base64,')) {
+    if (
+      typeof body.firmaBase64 !== 'string' ||
+      body.firmaBase64.length > MAX_SIGNATURE_BASE64_LENGTH ||
+      !body.firmaBase64.startsWith('data:image/png;base64,')
+    ) {
       return NextResponse.json(
         { ok: false, error: 'La firma digital es inválida o está vacía.' },
         { status: 400 }
@@ -113,21 +175,21 @@ export async function POST(request: NextRequest) {
       source: 'consentimiento_informado',
       timestampISO,
       timestampArgentina,
-      nombreCompleto: body.nombreCompleto!.trim(),
-      dni: body.dni!.trim(),
-      fechaNacimiento: body.fechaNacimiento!.trim(),
-      email: body.email!.trim(),
-      telefono: body.telefono!.trim(),
+      nombreCompleto,
+      dni,
+      fechaNacimiento,
+      email,
+      telefono,
       tratamientoActual: body.tratamientoActual,
-      observaciones: body.observaciones?.trim() || '',
+      observaciones,
       aceptaTerminos: true,
       confirmaEncuadreEtico: true,
       pacienteRiesgo: body.pacienteRiesgo,
-      autorizacionMedicaBase64: body.autorizacionMedicaBase64 || '',
-      autorizacionMedicaNombre: body.autorizacionMedicaNombre || '',
-      autorizacionMedicaMime: body.autorizacionMedicaMime || '',
-      aclaracion: body.aclaracion!.trim(),
-      fechaFirma: body.fechaFirma?.trim() || timestampArgentina,
+      autorizacionMedicaBase64,
+      autorizacionMedicaNombre,
+      autorizacionMedicaMime,
+      aclaracion,
+      fechaFirma: fechaFirmaInput || timestampArgentina,
       firmaBase64: body.firmaBase64,
     };
 
@@ -146,17 +208,13 @@ export async function POST(request: NextRequest) {
         });
         synced = webhookRes.ok;
         if (!webhookRes.ok) {
-          console.error(
-            `[Consentimiento] Webhook respondió ${webhookRes.status}: ${webhookRes.statusText}`
-          );
+          console.error(`[Consentimiento] Webhook respondió estado ${webhookRes.status}`);
         }
-      } catch (webhookError) {
-        console.error('[Consentimiento] Error enviando al webhook:', webhookError);
+      } catch {
+        console.error('[Consentimiento] Error de red al enviar al webhook');
       }
     } else {
-      console.warn(
-        '[Consentimiento] GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL / N8N_CONSENTIMIENTO_WEBHOOK_URL no configurada.'
-      );
+      console.warn('[Consentimiento] Variable de webhook no configurada');
     }
 
     return NextResponse.json({
@@ -165,8 +223,7 @@ export async function POST(request: NextRequest) {
       timestampISO,
       timestampArgentina,
     });
-  } catch (error) {
-    console.error('[Consentimiento] Error procesando solicitud:', error);
+  } catch {
     return NextResponse.json(
       { ok: false, error: 'No se pudo procesar el formulario. Intentá nuevamente.' },
       { status: 500 }

@@ -143,9 +143,14 @@ export default function Home() {
                 <li>✓ Preparado a medida incluido</li>
                 <li>✓ Seguimiento terapéutico</li>
               </ul>
-              <Link href="/reservas" className="btn btn-primary mt-4">
+              <a
+                href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary mt-4"
+              >
                 Agendar Consultoría Real
-              </Link>
+              </a>
             </div>
             <div className="consultancy-image">
               <div className="img-placeholder-large">Sesión 1:1</div>

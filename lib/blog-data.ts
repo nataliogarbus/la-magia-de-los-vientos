@@ -78,7 +78,7 @@ export const blogPosts: BlogPost[] = [
       
       <div class="cta-block">
         <p>¿Estás listo para tu fórmula única?</p>
-        <a href="/reservas" class="btn btn-primary">Agendar Consultoría 1:1</a>
+        <a href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n." target="_blank" rel="noopener noreferrer" class="btn btn-primary">Agendar Consultoría 1:1</a>
       </div>
     `,
     image: '/hero-bach.png'

@@ -132,7 +132,14 @@ export default function PreparadosClient() {
             <p>Si no sabés cuál elegir o tu situación requiere una combinación específica, la Consultoría 1:1 es el camino.</p>
             <div className="formula-cta-actions">
               <Link href="/consultas" className="btn btn-primary">Ver Consultas</Link>
-              <Link href="/reservas" className="btn btn-secondary">Agendar Sesión</Link>
+              <a
+                href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary"
+              >
+                Agendar Sesión
+              </a>
             </div>
           </div>
         </div>

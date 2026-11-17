@@ -355,6 +355,14 @@ export default function SobreElianaSection({
           .eliana-cta-row .btn {
             width: 100%;
           }
+
+          .portrait-credential-tag {
+            right: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.65rem;
+          }
         }
       `}</style>
     </section>

@@ -10,18 +10,19 @@ export default function LeadMagnet() {
     e.preventDefault();
     
     try {
-      // Enviar a n8n Webhook (Configurar N8N_WEBHOOK_URL en .env)
-      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL || 'https://n8n.kapi.com.ar/webhook/la-magia-leads';
-      
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          source: 'lead_magnet_v2',
-          target: 'guia_sintonia_casa'
-        }),
-      });
+      const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL;
+
+      if (webhookUrl) {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            source: 'lead_magnet_v2',
+            target: 'guia_sintonia_casa',
+          }),
+        });
+      }
 
       setSubmitted(true);
       // Descarga automática del recurso

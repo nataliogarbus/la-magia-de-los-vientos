@@ -33,7 +33,18 @@ export default function Navbar() {
           <li><Link href="/" onClick={() => setIsOpen(false)}>Inicio</Link></li>
           <li><Link href="/consultas" onClick={() => setIsOpen(false)}>Consultas</Link></li>
           <li><Link href="/preparados" onClick={() => setIsOpen(false)}>Preparados</Link></li>
-          <li><Link href="/reservas" onClick={() => setIsOpen(false)} className="btn btn-primary btn-sm">Reserva tu Turno</Link></li>
+          <li><Link href="/reservas" onClick={() => setIsOpen(false)}>Reservas</Link></li>
+          <li>
+            <a
+              href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20quisiera%20consultar%20disponibilidad%20para%20reservar%20una%20sesi%C3%B3n."
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setIsOpen(false)}
+              className="btn btn-primary btn-sm"
+            >
+              Reserva tu Turno
+            </a>
+          </li>
         </ul>
       </div>
 
@@ -103,6 +114,16 @@ export default function Navbar() {
         .nav-links a:hover::after {
           width: 100%;
         }
+        .nav-links a.btn-primary {
+          color: var(--background);
+        }
+        .nav-links a.btn-primary::after {
+          display: none;
+        }
+        .nav-links a:focus-visible {
+          outline: 2px solid var(--color-primary);
+          outline-offset: 4px;
+        }
 
         .btn-sm {
           padding: 0.5rem 1rem;
@@ -152,6 +173,12 @@ export default function Navbar() {
           top: 0;
         }
 
+        @media (max-width: 420px) {
+          .brand-name {
+            font-size: 1.08rem;
+          }
+        }
+
         @media (max-width: 768px) {
           .mobile-toggle {
             display: block;
@@ -167,12 +194,16 @@ export default function Navbar() {
             padding: 2rem;
             gap: 1.5rem;
             transform: translateY(-150%);
-            transition: transform 0.3s ease-in-out;
+            visibility: hidden;
+            pointer-events: none;
+            transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
             box-shadow: var(--shadow-md);
           }
 
           .nav-links.active {
             transform: translateY(0);
+            visibility: visible;
+            pointer-events: auto;
           }
         }
       `}</style>
