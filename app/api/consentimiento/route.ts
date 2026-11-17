@@ -195,31 +195,60 @@ export async function POST(request: NextRequest) {
 
     const webhookUrl =
       process.env.GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL ||
+      process.env.GOOGLE_DRIVE_WEBHOOK_URL ||
       process.env.N8N_CONSENTIMIENTO_WEBHOOK_URL;
 
-    let synced = false;
-    if (webhookUrl) {
+    if (!webhookUrl) {
+      console.error('[Consentimiento] Webhook de Google Drive no configurado en el servidor');
+      return NextResponse.json(
+        { ok: false, error: 'Webhook de Google Drive no configurado en el servidor' },
+        { status: 500 }
+      );
+    }
+
+    try {
+      const webhookRes = await fetch(webhookUrl, {
+        method: 'POST',
+        redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(record),
+      });
+
+      const responseText = await webhookRes.text();
+      let parsed: { ok?: boolean; error?: string } | null = null;
       try {
-        const webhookRes = await fetch(webhookUrl, {
-          method: 'POST',
-          redirect: 'follow',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(record),
-        });
-        synced = webhookRes.ok;
-        if (!webhookRes.ok) {
-          console.error(`[Consentimiento] Webhook respondió estado ${webhookRes.status}`);
-        }
+        parsed = JSON.parse(responseText) as { ok?: boolean; error?: string };
       } catch {
-        console.error('[Consentimiento] Error de red al enviar al webhook');
+        parsed = null;
       }
-    } else {
-      console.warn('[Consentimiento] Variable de webhook no configurada');
+
+      if (!webhookRes.ok || !parsed || parsed.ok !== true) {
+        console.error(
+          `[Consentimiento] Respuesta inválida de Apps Script (HTTP ${webhookRes.status}):`,
+          responseText.slice(0, 500)
+        );
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'No se pudo confirmar el guardado en Google Drive. Intentá nuevamente.',
+          },
+          { status: 502 }
+        );
+      }
+    } catch (err) {
+      console.error('[Consentimiento] Error de red al conectar con Apps Script:', err);
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Error de conexión al guardar en Google Drive. Intentá nuevamente.',
+        },
+        { status: 502 }
+      );
     }
 
     return NextResponse.json({
       ok: true,
-      synced,
+      synced: true,
       timestampISO,
       timestampArgentina,
     });
