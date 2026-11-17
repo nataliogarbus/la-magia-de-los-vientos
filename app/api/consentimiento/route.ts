@@ -86,26 +86,31 @@ export async function POST(request: NextRequest) {
     };
 
     const webhookUrl =
-      process.env.N8N_CONSENTIMIENTO_WEBHOOK_URL ||
-      process.env.N8N_WEBHOOK_URL ||
-      process.env.NEXT_PUBLIC_N8N_WEBHOOK_URL ||
-      'https://n8n.kapi.com.ar/webhook/la-magia-leads';
+      process.env.GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL ||
+      process.env.N8N_CONSENTIMIENTO_WEBHOOK_URL;
 
     let synced = false;
-    try {
-      const webhookRes = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(record),
-      });
-      synced = webhookRes.ok;
-      if (!webhookRes.ok) {
-        console.error(
-          `[Consentimiento] Webhook respondió ${webhookRes.status}: ${webhookRes.statusText}`
-        );
+    if (webhookUrl) {
+      try {
+        const webhookRes = await fetch(webhookUrl, {
+          method: 'POST',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(record),
+        });
+        synced = webhookRes.ok;
+        if (!webhookRes.ok) {
+          console.error(
+            `[Consentimiento] Webhook respondió ${webhookRes.status}: ${webhookRes.statusText}`
+          );
+        }
+      } catch (webhookError) {
+        console.error('[Consentimiento] Error enviando al webhook:', webhookError);
       }
-    } catch (webhookError) {
-      console.error('[Consentimiento] Error enviando al webhook:', webhookError);
+    } else {
+      console.warn(
+        '[Consentimiento] GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL / N8N_CONSENTIMIENTO_WEBHOOK_URL no configurada.'
+      );
     }
 
     return NextResponse.json({
