@@ -10,7 +10,7 @@
  *    GOOGLE_DRIVE_CONSENTIMIENTO_WEBHOOK_URL=https://script.google.com/macros/s/.../exec
  */
 
-const FOLDER_ID = 'PEGAR_AQUI_EL_ID_DE_LA_CARPETA';
+const FOLDER_ID = '1Jd7qXlDpc3zRtJbZC6pR6y3mb_oiPjEi';
 
 function doPost(e) {
   try {
