@@ -100,7 +100,7 @@ export default function RootLayout({
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Consultoría Humana de Flores de Bach", "description": "Sesión terapéutica personalizada de 60 minutos" }, "price": "25000", "priceCurrency": "ARS" },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Huellas en Calma — Bienestar Animal", "description": "Terapia floral para mascotas" }, "price": "20000", "priceCurrency": "ARS" },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Armonización de Espacios" }, "price": "35000", "priceCurrency": "ARS" },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Preparados Magistrales de Flores de Bach", "description": "Fórmulas artesanales para adultos, niños y mascotas" }, "price": "18900", "priceCurrency": "ARS" }
+        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Preparados Magistrales de Flores de Bach", "description": "Fórmulas artesanales para adultos, niños y mascotas" }, "price": "20000", "priceCurrency": "ARS" }
       ]
     },
     "sameAs": [

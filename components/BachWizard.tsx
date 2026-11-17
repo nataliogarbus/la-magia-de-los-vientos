@@ -25,11 +25,11 @@ const EMOTIONS = [
 ];
 
 const PRODUCTS: Record<string, ProductInfo> = {
-  rescate: { name: 'SOS Rescate', price: '$18.900', flow: 'Rescue Remedy', benefit: 'Alivio inmediato ante crisis o shock.' },
-  ansiedad: { name: 'Calma Total', price: '$18.900', flow: 'Impatiens + White Chestnut', benefit: 'Serenidad mental y control del estrés.' },
-  sueño: { name: 'Descanso Profundo', price: '$18.900', flow: 'White Chestnut + Red Chestnut', benefit: 'Inducción al sueño y mente en calma.' },
-  foco: { name: 'Enfoque & Claridad', price: '$18.900', flow: 'Clematis + Larch', benefit: 'Máxima concentración y foco operativo.' },
-  animo: { name: 'Ánimo & Vitalidad', price: '$18.900', flow: 'Mustard + Gentian', benefit: 'Recuperá tu energía y optimismo.' },
+  rescate: { name: 'SOS Rescate', price: '$20.000', flow: 'Rescue Remedy', benefit: 'Alivio inmediato ante crisis o shock.' },
+  ansiedad: { name: 'Calma Total', price: '$20.000', flow: 'Impatiens + White Chestnut', benefit: 'Serenidad mental y control del estrés.' },
+  sueño: { name: 'Descanso Profundo', price: '$20.000', flow: 'White Chestnut + Red Chestnut', benefit: 'Inducción al sueño y mente en calma.' },
+  foco: { name: 'Enfoque & Claridad', price: '$20.000', flow: 'Clematis + Larch', benefit: 'Máxima concentración y foco operativo.' },
+  animo: { name: 'Ánimo & Vitalidad', price: '$20.000', flow: 'Mustard + Gentian', benefit: 'Recuperá tu energía y optimismo.' },
 };
 
 export default function BachWizard() {

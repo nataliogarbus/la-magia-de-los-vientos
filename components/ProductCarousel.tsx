@@ -5,11 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const PRODUCTS = [
-  { id: 'sos', name: 'SOS Rescate', icon: 'SR', price: '$18.900' },
-  { id: 'calma', name: 'Calma Total', icon: 'CT', price: '$18.900' },
-  { id: 'sueño', name: 'Descanso Profundo', icon: 'DP', price: '$18.900' },
-  { id: 'foco', name: 'Enfoque & Claridad', icon: 'EC', price: '$18.900' },
-  { id: 'animo', name: 'Ánimo & Vitalidad', icon: 'AV', price: '$18.900' },
+  { id: 'sos', name: 'SOS Rescate', icon: 'SR', price: '$20.000' },
+  { id: 'calma', name: 'Calma Total', icon: 'CT', price: '$20.000' },
+  { id: 'sueño', name: 'Descanso Profundo', icon: 'DP', price: '$20.000' },
+  { id: 'foco', name: 'Enfoque & Claridad', icon: 'EC', price: '$20.000' },
+  { id: 'animo', name: 'Ánimo & Vitalidad', icon: 'AV', price: '$20.000' },
   { id: 'custom', name: 'Fórmula a Medida', icon: 'FM', price: '$25.000' },
 ];
 
