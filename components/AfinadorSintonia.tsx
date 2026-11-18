@@ -4,14 +4,26 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { AmbientSoundEngine, SoundMood } from '@/lib/ambient-audio';
 
+export interface MapaNatalCalculado {
+  nombre: string;
+  fechaNacimiento: string;
+  edad: number;
+  semitono: string;
+  florNatal: string;
+  arquetipo: string;
+  grupoFloral: string;
+  cicloActual: string;
+  proyectoSentido: string;
+  edadesEspejo: string;
+  preguntaNatal: string;
+}
+
 interface CuradorSemitono {
   semitono: string;
   flor: string;
   grupoFloral: string;
   arquetipo: string;
   pregunta: string;
-  preparadoNombre: string;
-  preparadoSlug: string;
 }
 
 const DOCE_CURADORES: CuradorSemitono[] = [
@@ -22,8 +34,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Pulso Veloz que aprende la paciencia',
     pregunta:
       '¿En qué área de tu vida estás apurando un proceso que necesita su propio tiempo de maduración?',
-    preparadoNombre: 'Calma Total',
-    preparadoSlug: 'calma-total',
   },
   {
     semitono: 'Do# (C#)',
@@ -32,8 +42,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Sensibilidad que conquista el coraje sereno',
     pregunta:
       '¿Qué paso postergás hoy por miedo a lo que ya conocés o a quedar expuesto?',
-    preparadoNombre: 'SOS Rescate',
-    preparadoSlug: 'sos-rescate',
   },
   {
     semitono: 'Re (D)',
@@ -42,8 +50,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Soñador que encarna sus ideas en la tierra',
     pregunta:
       '¿Qué parte de tu presente estás evitando habitar al refugiarte en el futuro o en la fantasía?',
-    preparadoNombre: 'Enfoque & Claridad',
-    preparadoSlug: 'enfoque-y-claridad',
   },
   {
     semitono: 'Re# (D#)',
@@ -52,8 +58,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Sonrisa que se permite mostrar su verdad',
     pregunta:
       '¿Qué dolor o incomodidad estás cubriendo con buen humor para evitar un conflicto?',
-    preparadoNombre: 'Calma Total',
-    preparadoSlug: 'calma-total',
   },
   {
     semitono: 'Mi (E)',
@@ -62,8 +66,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Cuidador que aprende el amor sin apego',
     pregunta:
       '¿Dónde estás dando de más esperando inconscientemente retribución o permanencia?',
-    preparadoNombre: 'Calma Total',
-    preparadoSlug: 'calma-total',
   },
   {
     semitono: 'Fa (F)',
@@ -72,8 +74,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Idealista que descubre la fuerza del reposo',
     pregunta:
       '¿Qué causa o exigencia te mantiene en tensión constante incluso cuando el cuerpo pide descanso?',
-    preparadoNombre: 'Descanso Profundo',
-    preparadoSlug: 'descanso-profundo',
   },
   {
     semitono: 'Fa# (F#)',
@@ -82,8 +82,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Entrega que aprende a decir que no con calma',
     pregunta:
       '¿En qué vínculo cediste tu propia voz para no decepcionar al otro?',
-    preparadoNombre: 'Ánimo & Vitalidad',
-    preparadoSlug: 'animo-y-vitalidad',
   },
   {
     semitono: 'Sol (G)',
@@ -92,8 +90,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Buscador que confía en su sabiduría interna',
     pregunta:
       '¿Qué decisión ya sabés en tu interior pero seguís consultando afuera por miedo a equivocarte?',
-    preparadoNombre: 'Enfoque & Claridad',
-    preparadoSlug: 'enfoque-y-claridad',
   },
   {
     semitono: 'Sol# (G#)',
@@ -102,8 +98,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'El Equilibrio entre dos notas opuestas',
     pregunta:
       '¿Entre qué dos caminos oscilás hoy sin animarte a elegir uno con presencia?',
-    preparadoNombre: 'Enfoque & Claridad',
-    preparadoSlug: 'enfoque-y-claridad',
   },
   {
     semitono: 'La (A)',
@@ -112,8 +106,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Presencia Serena que se abre al encuentro',
     pregunta:
       '¿Qué te impide pedir acompañamiento o compartir tu vulnerabilidad con alguien de confianza?',
-    preparadoNombre: 'Ánimo & Vitalidad',
-    preparadoSlug: 'animo-y-vitalidad',
   },
   {
     semitono: 'La# (A#)',
@@ -122,8 +114,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Perseverancia que confía tras el tropiezo',
     pregunta:
       '¿Qué obstáculo reciente interpretaste como un fracaso definitivo en lugar de un ajuste de ritmo?',
-    preparadoNombre: 'Ánimo & Vitalidad',
-    preparadoSlug: 'animo-y-vitalidad',
   },
   {
     semitono: 'Si (B)',
@@ -132,8 +122,6 @@ const DOCE_CURADORES: CuradorSemitono[] = [
     arquetipo: 'La Presencia Íntegra ante la tormenta',
     pregunta:
       '¿Qué situación actual activa en vos una alarma desproporcionada respecto al peligro real?',
-    preparadoNombre: 'SOS Rescate',
-    preparadoSlug: 'sos-rescate',
   },
 ];
 
@@ -144,7 +132,7 @@ interface EstadoMomento {
   descripcion: string;
   climaSonoro: string;
   grupoFloral: string;
-  esenciaEje: string;
+  esenciaPresente: string;
   pregunta: string;
   preparadoNombre: string;
   preparadoSlug: string;
@@ -158,7 +146,7 @@ const ESTADOS_MOMENTO: EstadoMomento[] = [
     descripcion: 'Hiperexigencia, diálogo interno acelerado o dificultad para desconectar.',
     climaSonoro: 'Armónicos graves en Sol abierto · Enraizamiento',
     grupoFloral: 'Falta de interés en el presente / Preocupación',
-    esenciaEje: 'White Chestnut + Impatiens',
+    esenciaPresente: 'White Chestnut + Impatiens',
     pregunta:
       '¿Qué conversación pendiente o exigencia estás intentando resolver en tu mente ahora mismo, cuando en realidad necesita pausa?',
     preparadoNombre: 'Calma Total',
@@ -171,7 +159,7 @@ const ESTADOS_MOMENTO: EstadoMomento[] = [
     descripcion: 'Rigidez en hombros o mandíbula, urgencia interna o sensación de nudo.',
     climaSonoro: 'Acorde cálido en La suspendido · Distensión muscular',
     grupoFloral: 'Miedo / Emergencia del sistema nervioso',
-    esenciaEje: 'Rock Rose + Star of Bethlehem + Cherry Plum',
+    esenciaPresente: 'Rock Rose + Star of Bethlehem + Cherry Plum',
     pregunta:
       '¿De qué situación o responsabilidad sentís que tenés que hacerte cargo en este instante, y qué pasaría si soltaras el control por un minuto?',
     preparadoNombre: 'SOS Rescate',
@@ -184,7 +172,7 @@ const ESTADOS_MOMENTO: EstadoMomento[] = [
     descripcion: 'Agotamiento emocional, apatía o desconexión temporal con tu deseo.',
     climaSonoro: 'Intervalos abiertos en Fa mayor 7 · Luminosidad serena',
     grupoFloral: 'Desaliento o desesperación',
-    esenciaEje: 'Gentian + Mustard + Wild Rose',
+    esenciaPresente: 'Gentian + Mustard + Wild Rose',
     pregunta:
       '¿En qué momento reciente dejaste de escuchar tu propio deseo para priorizar únicamente lo que sentías que "había que hacer"?',
     preparadoNombre: 'Ánimo & Vitalidad',
@@ -192,39 +180,24 @@ const ESTADOS_MOMENTO: EstadoMomento[] = [
   },
 ];
 
-interface UnifiedResult {
-  origen: 'momento' | 'natal';
-  tituloResultado: string;
-  subtituloResultado: string;
-  preguntaIndagacion: string;
-  preparadoNombre: string;
-  preparadoSlug: string;
-  grupoFloral: string;
-  esenciaEje: string;
-  // Datos técnicos para Vista Terapeuta / Colega
-  proyectoSentido?: string;
-  edadesEspejo?: string;
-  cicloActual?: string;
-  semitonoMusical?: string;
-}
-
 const TOTAL_SECONDS = 60;
+export const LIBRETA_STORAGE_KEY = 'lamagia_libreta_v1';
 
 export default function AfinadorSintonia() {
-  const [activeTab, setActiveTab] = useState<'momento' | 'natal'>('momento');
+  const [step, setStep] = useState<1 | 2 | 3>(1);
 
-  // Estado Tab 1: Momento + Pausa 60s
-  const [selectedId, setSelectedId] = useState<EstadoMomento['id'] | null>(null);
-  const [phase, setPhase] = useState<'select' | 'running' | 'result'>('select');
+  // Paso 1: Natal
+  const [nombre, setNombre] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [step1Error, setStep1Error] = useState<string | null>(null);
+  const [mapaNatal, setMapaNatal] = useState<MapaNatalCalculado | null>(null);
+
+  // Paso 2 & 3: Momento presente + Pausa 60s + Lectura integrada
+  const [selectedEstado, setSelectedEstado] = useState<EstadoMomento | null>(null);
+  const [pausePhase, setPausePhase] = useState<'running' | 'complete'>('running');
   const [secondsLeft, setSecondsLeft] = useState(TOTAL_SECONDS);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Estado Tab 2: Flor Natal & Ciclos
-  const [birthDate, setBirthDate] = useState('');
-  const [natalError, setNatalError] = useState<string | null>(null);
-
-  // Resultado unificado + Vista Colega + Compartir
-  const [result, setResult] = useState<UnifiedResult | null>(null);
   const [vistaColega, setVistaColega] = useState(false);
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);
 
@@ -237,29 +210,37 @@ export default function AfinadorSintonia() {
     };
   }, []);
 
+  const persistMapaToLibreta = (mapa: MapaNatalCalculado, estado?: EstadoMomento) => {
+    try {
+      const existingRaw = localStorage.getItem(LIBRETA_STORAGE_KEY);
+      const existing = existingRaw ? JSON.parse(existingRaw) : {};
+      const updated = {
+        ...existing,
+        mapaNatal: {
+          ...mapa,
+          estadoReciente: estado ? estado.titulo : existing?.mapaNatal?.estadoReciente || '',
+          actualizadoEn: new Date().toISOString(),
+        },
+      };
+      localStorage.setItem(LIBRETA_STORAGE_KEY, JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('lamagia:libreta-updated'));
+    } catch {
+      // Ignorar si localStorage no está disponible
+    }
+  };
+
   useEffect(() => {
-    if (phase !== 'running' || isPaused) return;
+    if (step !== 3 || pausePhase !== 'running' || isPaused) return;
 
     const timer = setInterval(() => {
       setSecondsLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
           engineRef.current?.stop();
-          const estado = ESTADOS_MOMENTO.find((e) => e.id === selectedId);
-          if (estado) {
-            setResult({
-              origen: 'momento',
-              tituloResultado: estado.titulo,
-              subtituloResultado: estado.climaSonoro,
-              preguntaIndagacion: estado.pregunta,
-              preparadoNombre: estado.preparadoNombre,
-              preparadoSlug: estado.preparadoSlug,
-              grupoFloral: estado.grupoFloral,
-              esenciaEje: estado.esenciaEje,
-              semitonoMusical: estado.climaSonoro,
-            });
+          setPausePhase('complete');
+          if (mapaNatal && selectedEstado) {
+            persistMapaToLibreta(mapaNatal, selectedEstado);
           }
-          setPhase('result');
           return 0;
         }
         return prev - 1;
@@ -267,21 +248,76 @@ export default function AfinadorSintonia() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [phase, isPaused, selectedId]);
+  }, [step, pausePhase, isPaused, mapaNatal, selectedEstado]);
 
-  const startPause = (id: EstadoMomento['id']) => {
-    setSelectedId(id);
+  const handleStep1Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep1Error(null);
+    if (!birthDate) {
+      setStep1Error('Ingresá tu fecha de nacimiento para calcular tu mapa natal.');
+      return;
+    }
+
+    const birth = new Date(`${birthDate}T00:00:00`);
+    const today = new Date();
+    if (Number.isNaN(birth.getTime()) || birth > today) {
+      setStep1Error('Ingresá una fecha de nacimiento válida.');
+      return;
+    }
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const mDiff = today.getMonth() - birth.getMonth();
+    if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    const index = (birth.getMonth() + (birth.getDate() > 15 ? 1 : 0)) % 12;
+    const curador = DOCE_CURADORES[index];
+
+    const psStart = new Date(birth);
+    psStart.setMonth(psStart.getMonth() - 9);
+    const fmt = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' });
+    const proyectoSentido = `${fmt.format(psStart)} — ${fmt.format(birth)} (gestación y nacimiento)`;
+
+    const septenio = Math.floor(Math.max(0, age) / 7) + 1;
+    const mitadEdad = age >= 2 ? Math.floor(age / 2) : 0;
+    const septenioPrevio = Math.max(0, (septenio - 1) * 7);
+    const edadesEspejo = `Mitad de vida: ${mitadEdad} años · Inicio de ciclo: ${septenioPrevio} años · Próximo hito: ${
+      septenio * 7
+    } años`;
+
+    const calculated: MapaNatalCalculado = {
+      nombre: nombre.trim() || 'Consultante',
+      fechaNacimiento: birthDate,
+      edad: age,
+      semitono: curador.semitono,
+      florNatal: curador.flor,
+      arquetipo: curador.arquetipo,
+      grupoFloral: curador.grupoFloral,
+      cicloActual: `${age} años (Septenio ${septenio}° de desarrollo)`,
+      proyectoSentido,
+      edadesEspejo,
+      preguntaNatal: curador.pregunta,
+    };
+
+    setMapaNatal(calculated);
+    persistMapaToLibreta(calculated);
+    setStep(2);
+  };
+
+  const startStep3 = (estado: EstadoMomento) => {
+    setSelectedEstado(estado);
     setSecondsLeft(TOTAL_SECONDS);
     setIsPaused(false);
-    setResult(null);
-    setPhase('running');
-    engineRef.current?.start(id, 0.35);
+    setPausePhase('running');
+    setStep(3);
+    engineRef.current?.start(estado.id, 0.35);
   };
 
   const togglePause = () => {
-    if (!selectedId) return;
+    if (!selectedEstado) return;
     if (isPaused) {
-      engineRef.current?.start(selectedId, 0.35);
+      engineRef.current?.start(selectedEstado.id, 0.35);
       setIsPaused(false);
     } else {
       engineRef.current?.stop();
@@ -291,106 +327,37 @@ export default function AfinadorSintonia() {
 
   const finishPauseNow = () => {
     engineRef.current?.stop();
-    const estado = ESTADOS_MOMENTO.find((e) => e.id === selectedId);
-    if (estado) {
-      setResult({
-        origen: 'momento',
-        tituloResultado: estado.titulo,
-        subtituloResultado: estado.climaSonoro,
-        preguntaIndagacion: estado.pregunta,
-        preparadoNombre: estado.preparadoNombre,
-        preparadoSlug: estado.preparadoSlug,
-        grupoFloral: estado.grupoFloral,
-        esenciaEje: estado.esenciaEje,
-        semitonoMusical: estado.climaSonoro,
-      });
+    setPausePhase('complete');
+    if (mapaNatal && selectedEstado) {
+      persistMapaToLibreta(mapaNatal, selectedEstado);
     }
-    setPhase('result');
   };
 
-  const handleCalculateNatal = (e: React.FormEvent) => {
-    e.preventDefault();
-    setNatalError(null);
-    if (!birthDate) {
-      setNatalError('Ingresá tu fecha de nacimiento para calcular tu sintonía.');
-      return;
-    }
-
-    const birth = new Date(`${birthDate}T00:00:00`);
-    const today = new Date();
-    if (Number.isNaN(birth.getTime()) || birth > today) {
-      setNatalError('Ingresá una fecha de nacimiento válida.');
-      return;
-    }
-
-    // Edad actual
-    let age = today.getFullYear() - birth.getFullYear();
-    const mDiff = today.getMonth() - birth.getMonth();
-    if (mDiff < 0 || (mDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-
-    // Índice en los 12 Curadores / 12 Semitonos según mes y día
-    const index = (birth.getMonth() + (birth.getDate() > 15 ? 1 : 0)) % 12;
-    const curador = DOCE_CURADORES[index];
-
-    // Ventana Proyecto Sentido (9 meses antes del nacimiento)
-    const psStart = new Date(birth);
-    psStart.setMonth(psStart.getMonth() - 9);
-    const fmt = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' });
-    const proyectoSentido = `${fmt.format(psStart)} — ${fmt.format(birth)} (gestación y nacimiento)`;
-
-    // Ciclo septenio y edades espejo
-    const septenio = Math.floor(Math.max(0, age) / 7) + 1;
-    const mitadEdad = age >= 2 ? Math.floor(age / 2) : 0;
-    const septenioPrevio = Math.max(0, (septenio - 1) * 7);
-    const edadesEspejo = `Mitad de vida: ${mitadEdad} años · Inicio de ciclo actual: ${septenioPrevio} años · Próximo hito: ${
-      septenio * 7
-    } años`;
-
+  const resetFlow = () => {
     engineRef.current?.stop();
-    setResult({
-      origen: 'natal',
-      tituloResultado: `${curador.flor} · ${curador.semitono}`,
-      subtituloResultado: curador.arquetipo,
-      preguntaIndagacion: curador.pregunta,
-      preparadoNombre: curador.preparadoNombre,
-      preparadoSlug: curador.preparadoSlug,
-      grupoFloral: curador.grupoFloral,
-      esenciaEje: curador.flor,
-      proyectoSentido,
-      edadesEspejo,
-      cicloActual: `${age} años (Septenio ${septenio}° de desarrollo)`,
-      semitonoMusical: `${curador.semitono} — ${curador.flor}`,
-    });
-    setPhase('result');
-  };
-
-  const resetAll = () => {
-    engineRef.current?.stop();
-    setPhase('select');
-    setSelectedId(null);
+    setStep(1);
+    setSelectedEstado(null);
+    setPausePhase('running');
     setSecondsLeft(TOTAL_SECONDS);
     setIsPaused(false);
-    setResult(null);
     setShareFeedback(null);
   };
 
   const handleShare = async () => {
-    if (!result) return;
-    const shareText = `Mi Plan de Sintonía de 21 Días · La Magia de los Vientos:\n• Sintonía: ${result.tituloResultado}\n• Pregunta de indagación: "${result.preguntaIndagacion}"\n• Esencia vibracional sugerida: ${result.esenciaEje} (${result.preparadoNombre})\n\nEscuchá tu pausa sonora en lamagiadelosvientos.com.ar`;
+    if (!mapaNatal || !selectedEstado) return;
+    const shareText = `Mi Lectura Integrada · La Magia de los Vientos:\n• Arquetipo Natal: ${mapaNatal.florNatal} (${mapaNatal.semitono})\n• Momento Presente: ${selectedEstado.titulo}\n• Pregunta para hoy: "${selectedEstado.pregunta}"\n• Esencia de apoyo: ${selectedEstado.esenciaPresente} (${selectedEstado.preparadoNombre})\n\nDescubrí tu sintonía en lamagiadelosvientos.com.ar`;
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
-          title: 'Mi Plan de Sintonía · La Magia de los Vientos',
+          title: 'Mi Sintonía · La Magia de los Vientos',
           text: shareText,
           url: window.location.href,
         });
         setShareFeedback('Plan de 21 días compartido');
         return;
       } catch {
-        // Si el usuario cancela o falla, caemos al portapapeles
+        // Fallback a portapapeles
       }
     }
 
@@ -403,7 +370,6 @@ export default function AfinadorSintonia() {
     }
   };
 
-  const selectedEstado = ESTADOS_MOMENTO.find((e) => e.id === selectedId) || null;
   const progress = ((TOTAL_SECONDS - secondsLeft) / TOTAL_SECONDS) * 100;
   const circumference = 2 * Math.PI * 82;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
@@ -421,98 +387,125 @@ export default function AfinadorSintonia() {
       <div className="container">
         <div className="afinador-shell">
           <div className="afinador-header">
-            <span className="afinador-eyebrow">INSTRUMENTO DE SINTONÍA EMOCIONAL</span>
+            <span className="afinador-eyebrow">CAMINO GUIADO EN 3 PASOS</span>
             <h2 id="afinador-titulo">
               Afinador de <em>Sintonía</em>
             </h2>
             <p className="afinador-lead">
-              Elegí una puerta de entrada: escuchá cómo suena tu momento presente o calculá tu arquetipo floral natal según los 12 semitonos de Bach.
+              Un recorrido lineal para cruzar tu historia natal con tu momento presente y guardar tu lectura en tu libreta personal.
             </p>
           </div>
 
-          {phase !== 'running' && phase !== 'result' && (
-            <div className="tabs-bar" role="tablist" aria-label="Puertas de entrada">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === 'momento'}
-                className={`tab-pill ${activeTab === 'momento' ? 'active' : ''}`}
-                onClick={() => setActiveTab('momento')}
-              >
-                1. Sintonía del Momento
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === 'natal'}
-                className={`tab-pill ${activeTab === 'natal' ? 'active' : ''}`}
-                onClick={() => setActiveTab('natal')}
-              >
-                2. Mi Flor Natal & Ciclos
-              </button>
+          {/* Indicador lineal de 3 pasos */}
+          <div className="linear-steps" aria-label="Progreso del afinador">
+            <div className={`linear-step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}>
+              <span>01</span> Tu Mapa Natal
             </div>
-          )}
-
-          {/* TAB 1: SINTONÍA DEL MOMENTO */}
-          {phase === 'select' && activeTab === 'momento' && (
-            <div className="estados-grid">
-              {ESTADOS_MOMENTO.map((estado, idx) => (
-                <article key={estado.id} className="estado-card">
-                  <div className="estado-top">
-                    <span className="estado-num">0{idx + 1}</span>
-                    <span className="estado-sub">{estado.subtitulo}</span>
-                  </div>
-                  <h3>{estado.titulo}</h3>
-                  <p>{estado.descripcion}</p>
-
-                  <div className="estado-actions">
-                    <button
-                      type="button"
-                      onClick={() => engineRef.current?.playContrastTexture(estado.id)}
-                      className="texture-preview-btn"
-                    >
-                      Escuchar textura (2s)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => startPause(estado.id)}
-                      className="start-pause-btn"
-                    >
-                      Iniciar pausa de 60s →
-                    </button>
-                  </div>
-                </article>
-              ))}
+            <div className={`linear-step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}>
+              <span>02</span> Momento Presente
             </div>
-          )}
+            <div className={`linear-step ${step === 3 ? 'active' : ''}`}>
+              <span>03</span> Silencio &amp; Lectura
+            </div>
+          </div>
 
-          {/* TAB 2: MI FLOR NATAL & CICLOS */}
-          {phase === 'select' && activeTab === 'natal' && (
-            <form onSubmit={handleCalculateNatal} className="natal-card">
-              <h3>Calculá tu Arquetipo Floral Base & Ciclo</h3>
+          {/* PASO 1: FECHA DE NACIMIENTO + NOMBRE OPCIONAL */}
+          {step === 1 && (
+            <form onSubmit={handleStep1Submit} className="step1-card">
+              <h3>Paso 1 · Tu Arquetipo Floral Natal &amp; Ciclo</h3>
               <p>
-                Ingresá tu fecha de nacimiento para asociar tu momento natal con uno de los 12 Curadores de Bach, los 12 semitonos musicales y tu ciclo transgeneracional actual.
+                Calculamos tu tonalidad musical base (12 semitonos / 12 Curadores de Bach), tu ciclo biológico actual y tu ventana de Proyecto Sentido.
               </p>
 
-              <div className="natal-input-row">
-                <input
-                  type="date"
-                  aria-label="Fecha de nacimiento"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  required
-                />
-                <button type="submit" className="pill-btn-accent">
-                  Calcular mi Sintonía
-                </button>
+              <div className="step1-fields">
+                <div className="field-col">
+                  <label htmlFor="afinador-nombre">Tu nombre (opcional)</label>
+                  <input
+                    id="afinador-nombre"
+                    type="text"
+                    placeholder="Ej: Sofía"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+                </div>
+                <div className="field-col">
+                  <label htmlFor="afinador-fecha">
+                    Fecha de nacimiento <span className="req">*</span>
+                  </label>
+                  <input
+                    id="afinador-fecha"
+                    type="date"
+                    required
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                  />
+                </div>
               </div>
 
-              {natalError && <p className="natal-error">{natalError}</p>}
+              {step1Error && <p className="step-error">{step1Error}</p>}
+
+              <button type="submit" className="pill-btn-accent">
+                Continuar al Paso 2 →
+              </button>
             </form>
           )}
 
-          {/* PAUSA DE 60 SEGUNDOS (EL SILENCIO ENTRE NOTAS) */}
-          {phase === 'running' && selectedEstado && (
+          {/* PASO 2: MICRO-TEXTURAS + ESTADO PRESENTE */}
+          {step === 2 && mapaNatal && (
+            <div>
+              <div className="natal-summary-strip">
+                <div>
+                  <span className="strip-kicker">Tu Arquetipo Natal</span>
+                  <p className="strip-main">
+                    <strong>{mapaNatal.florNatal}</strong> · {mapaNatal.semitono} · {mapaNatal.cicloActual}
+                  </p>
+                </div>
+                <button type="button" onClick={() => setStep(1)} className="strip-edit-btn">
+                  Editar fecha
+                </button>
+              </div>
+
+              <div className="step2-intro">
+                <h3>Paso 2 · ¿Cómo suena tu momento presente?</h3>
+                <p>
+                  Podés escuchar primero una micro-textura sonora de contraste (2s) y luego elegir tu estado para iniciar la pausa armónica de 60 segundos.
+                </p>
+              </div>
+
+              <div className="estados-grid">
+                {ESTADOS_MOMENTO.map((estado, idx) => (
+                  <article key={estado.id} className="estado-card">
+                    <div className="estado-top">
+                      <span className="estado-num">0{idx + 1}</span>
+                      <span className="estado-sub">{estado.subtitulo}</span>
+                    </div>
+                    <h4>{estado.titulo}</h4>
+                    <p>{estado.descripcion}</p>
+
+                    <div className="estado-actions">
+                      <button
+                        type="button"
+                        onClick={() => engineRef.current?.playContrastTexture(estado.id)}
+                        className="texture-preview-btn"
+                      >
+                        Escuchar textura (2s)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => startStep3(estado)}
+                        className="start-pause-btn"
+                      >
+                        Iniciar pausa de 60s →
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* PASO 3A: PAUSA DE 60 SEGUNDOS */}
+          {step === 3 && pausePhase === 'running' && selectedEstado && (
             <div className="breathing-stage" aria-live="polite">
               <div className={`organic-orb-wrap ${isPaused ? 'paused' : ''}`}>
                 <div className="orb-aura" />
@@ -557,20 +550,20 @@ export default function AfinadorSintonia() {
                   {isPaused ? 'Reanudar' : 'Pausar'}
                 </button>
                 <button type="button" onClick={finishPauseNow} className="pill-btn-accent">
-                  Ir a la receta editorial
+                  Ir a mi lectura integrada
                 </button>
-                <button type="button" onClick={resetAll} className="pill-btn-light">
-                  Volver
+                <button type="button" onClick={() => { engineRef.current?.stop(); setStep(2); }} className="pill-btn-light">
+                  Cambiar estado
                 </button>
               </div>
             </div>
           )}
 
-          {/* RESULTADO UNIFICADO + MODO COLEGA + COMPARTIR */}
-          {phase === 'result' && result && (
+          {/* PASO 3B: LECTURA ÚNICA INTEGRADA */}
+          {step === 3 && pausePhase === 'complete' && mapaNatal && selectedEstado && (
             <div className="receta-editorial" aria-live="polite">
               <div className="receta-top-bar">
-                <span className="receta-rx">Rx · Comprender para Sanar</span>
+                <span className="receta-rx">Lectura Integrada · Comprender para Sanar</span>
                 <label className="colega-toggle">
                   <input
                     type="checkbox"
@@ -582,45 +575,44 @@ export default function AfinadorSintonia() {
               </div>
 
               <div className="receta-title-block">
-                <span className="receta-estado">{result.tituloResultado}</span>
-                <p className="receta-sub">{result.subtituloResultado}</p>
+                <span className="receta-estado">
+                  {mapaNatal.florNatal} ({mapaNatal.semitono}) + {selectedEstado.titulo}
+                </span>
+                <p className="receta-sub">
+                  {mapaNatal.nombre}: tu arquetipo natal (<em>{mapaNatal.arquetipo}</em>) hoy atraviesa un momento de{' '}
+                  <strong>{selectedEstado.titulo.toLowerCase()}</strong>.
+                </p>
               </div>
 
               <blockquote className="receta-question">
-                &ldquo;{result.preguntaIndagacion}&rdquo;
+                &ldquo;{selectedEstado.pregunta}&rdquo;
               </blockquote>
+              <p className="natal-secondary-question">
+                <strong>Pregunta de tu ciclo natal ({mapaNatal.cicloActual}):</strong> {mapaNatal.preguntaNatal}
+              </p>
 
-              {/* Panel técnico Vista Terapeuta / Colega */}
               {vistaColega && (
                 <div className="colega-panel">
                   <h4>Datos Técnicos para Sesión</h4>
                   <div className="colega-grid">
                     <div>
-                      <span className="colega-label">Grupo Floral</span>
-                      <span className="colega-val">{result.grupoFloral}</span>
+                      <span className="colega-label">Arquetipo &amp; Grupo Natal</span>
+                      <span className="colega-val">
+                        {mapaNatal.florNatal} ({mapaNatal.grupoFloral})
+                      </span>
                     </div>
                     <div>
-                      <span className="colega-label">Esencia / Fórmula Eje</span>
-                      <span className="colega-val">{result.esenciaEje}</span>
+                      <span className="colega-label">Grupo Momento Presente</span>
+                      <span className="colega-val">{selectedEstado.grupoFloral}</span>
                     </div>
-                    {result.cicloActual && (
-                      <div>
-                        <span className="colega-label">Edad y Ciclo Actual</span>
-                        <span className="colega-val">{result.cicloActual}</span>
-                      </div>
-                    )}
-                    {result.proyectoSentido && (
-                      <div>
-                        <span className="colega-label">Ventana Proyecto Sentido (9m)</span>
-                        <span className="colega-val">{result.proyectoSentido}</span>
-                      </div>
-                    )}
-                    {result.edadesEspejo && (
-                      <div className="colega-full">
-                        <span className="colega-label">Edades Espejo / Aniversario</span>
-                        <span className="colega-val">{result.edadesEspejo}</span>
-                      </div>
-                    )}
+                    <div>
+                      <span className="colega-label">Ventana Proyecto Sentido (9m)</span>
+                      <span className="colega-val">{mapaNatal.proyectoSentido}</span>
+                    </div>
+                    <div>
+                      <span className="colega-label">Edades Espejo / Aniversario</span>
+                      <span className="colega-val">{mapaNatal.edadesEspejo}</span>
+                    </div>
                   </div>
                 </div>
               )}
@@ -631,23 +623,24 @@ export default function AfinadorSintonia() {
                 <span className="receta-kicker">Nota Botánica &amp; Vibracional</span>
                 <p className="nota-botanica-text">
                   Para acompañar esta frecuencia, la tradición floral trabaja con la esencia de{' '}
-                  <strong>{result.esenciaEje}</strong>, base de la fórmula{' '}
-                  <strong>{result.preparadoNombre}</strong>.
+                  <strong>{selectedEstado.esenciaPresente}</strong> (en diálogo con tu flor natal{' '}
+                  <strong>{mapaNatal.florNatal}</strong>), base de la fórmula{' '}
+                  <strong>{selectedEstado.preparadoNombre}</strong>.
                 </p>
-                <Link href={`/tienda/${result.preparadoSlug}`} className="nota-botanica-link">
+                <Link href={`/tienda/${selectedEstado.preparadoSlug}`} className="nota-botanica-link">
                   Conocer más sobre esta esencia →
                 </Link>
               </div>
 
               <div className="freemium-cta-block">
                 <p className="freemium-desc">
-                  Guardá tu <strong>Plan de Sintonía de 21 días</strong> y sumate gratis a la{' '}
+                  Tu mapa ya quedó guardado abajo en tu <strong>Libreta Personal de Sintonía</strong>. Sumate gratis a la{' '}
                   <strong>Comunidad de WhatsApp de La Magia de los Vientos</strong> para recibir pausas sonoras y reflexiones semanales.
                 </p>
                 <div className="freemium-actions">
                   <a
                     href={`https://wa.me/5491149143734?text=${encodeURIComponent(
-                      `Hola Eliana! Acabo de hacer mi sintonía en la web (${result.tituloResultado}) y quiero sumarme a la Comunidad de WhatsApp para recibir las pausas sonoras y reflexiones semanales.`
+                      `Hola Eliana! Soy ${mapaNatal.nombre}. Hice mi sintonía (${mapaNatal.florNatal} + ${selectedEstado.titulo}) y quiero sumarme gratis a la Comunidad de WhatsApp.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -658,13 +651,16 @@ export default function AfinadorSintonia() {
                   <button type="button" onClick={handleShare} className="share-btn">
                     Guardar Plan de 21 Días
                   </button>
+                  <a href="#libreta-evolucion" className="share-btn">
+                    Ir a mi Libreta ↓
+                  </a>
                 </div>
               </div>
 
               {shareFeedback && <p className="share-feedback">{shareFeedback}</p>}
 
-              <button type="button" onClick={resetAll} className="receta-reset">
-                Realizar otra consulta en el Afinador
+              <button type="button" onClick={resetFlow} className="receta-reset">
+                Realizar una nueva lectura
               </button>
             </div>
           )}
@@ -701,7 +697,7 @@ export default function AfinadorSintonia() {
         .afinador-header {
           text-align: center;
           max-width: 660px;
-          margin: 0 auto 2.5rem;
+          margin: 0 auto 2.25rem;
         }
 
         .afinador-eyebrow {
@@ -711,7 +707,7 @@ export default function AfinadorSintonia() {
           text-transform: uppercase;
           letter-spacing: 0.28em;
           color: #b89768;
-          margin-bottom: 1rem;
+          margin-bottom: 0.9rem;
         }
 
         .afinador-header h2 {
@@ -719,7 +715,7 @@ export default function AfinadorSintonia() {
           font-size: clamp(2.1rem, 4.5vw, 3.2rem);
           font-weight: 400;
           color: #f6f3ec;
-          margin-bottom: 1rem;
+          margin-bottom: 0.9rem;
           line-height: 1.15;
         }
 
@@ -735,38 +731,167 @@ export default function AfinadorSintonia() {
           line-height: 1.8;
         }
 
-        /* Tabs */
-        .tabs-bar {
+        .linear-steps {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.65rem;
+          margin-bottom: 2.25rem;
+        }
+
+        .linear-step {
           display: flex;
+          align-items: center;
           justify-content: center;
-          gap: 0.75rem;
-          flex-wrap: wrap;
-          margin-bottom: 2.5rem;
-        }
-
-        .tab-pill {
-          padding: 0.75rem 1.5rem;
+          gap: 0.5rem;
+          padding: 0.65rem 0.75rem;
           border-radius: 9999px;
-          border: 1px solid rgba(184, 151, 104, 0.4);
-          background: rgba(246, 243, 236, 0.04);
-          color: rgba(246, 243, 236, 0.8);
-          font-family: var(--font-main);
-          font-size: 0.8rem;
-          font-weight: 500;
-          letter-spacing: 0.08em;
+          border: 1px solid rgba(246, 243, 236, 0.18);
+          font-size: 0.76rem;
+          color: rgba(246, 243, 236, 0.6);
           text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.25s ease;
+          letter-spacing: 0.08em;
         }
 
-        .tab-pill.active {
-          background-color: #b89768;
+        .linear-step span {
+          font-family: var(--font-serif);
+          color: #b89768;
+        }
+
+        .linear-step.active {
           border-color: #b89768;
-          color: #2c3a33;
+          background: rgba(184, 151, 104, 0.18);
+          color: #f6f3ec;
+          font-weight: 600;
+        }
+
+        .linear-step.done {
+          border-color: rgba(184, 151, 104, 0.45);
+          color: rgba(246, 243, 236, 0.85);
+        }
+
+        /* Paso 1 */
+        .step1-card {
+          max-width: 680px;
+          margin: 0 auto;
+          background: rgba(246, 243, 236, 0.06);
+          border: 1px solid rgba(184, 151, 104, 0.35);
+          border-radius: 16px;
+          padding: 2.25rem 2rem;
+          text-align: center;
+        }
+
+        .step1-card h3 {
+          font-family: var(--font-serif);
+          font-size: 1.65rem;
+          color: #f6f3ec;
+          margin-bottom: 0.7rem;
+        }
+
+        .step1-card > p {
+          font-size: 0.95rem;
+          font-weight: 300;
+          color: rgba(246, 243, 236, 0.78);
+          line-height: 1.7;
+          margin-bottom: 1.75rem;
+        }
+
+        .step1-fields {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          text-align: left;
+          margin-bottom: 1.5rem;
+        }
+
+        .field-col {
+          display: flex;
+          flex-direction: column;
+          gap: 0.4rem;
+        }
+
+        .field-col label {
+          font-size: 0.82rem;
+          color: rgba(246, 243, 236, 0.9);
+          font-weight: 500;
+        }
+
+        .req {
+          color: #b89768;
+        }
+
+        .field-col input {
+          min-height: 46px;
+          padding: 0.65rem 1rem;
+          border-radius: 10px;
+          border: 1px solid rgba(184, 151, 104, 0.55);
+          background-color: #f6f3ec;
+          color: #1d221f;
+          font-family: var(--font-main);
+          font-size: 0.95rem;
+        }
+
+        .step-error {
+          color: #f3c6c6;
+          font-size: 0.88rem;
+          margin-bottom: 1rem;
+        }
+
+        /* Paso 2 */
+        .natal-summary-strip {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          flex-wrap: wrap;
+          background: rgba(246, 243, 236, 0.08);
+          border: 1px solid rgba(184, 151, 104, 0.4);
+          border-radius: 12px;
+          padding: 0.9rem 1.25rem;
+          margin-bottom: 1.75rem;
+        }
+
+        .strip-kicker {
+          display: block;
+          font-size: 0.65rem;
+          text-transform: uppercase;
+          letter-spacing: 0.16em;
+          color: #b89768;
           font-weight: 700;
         }
 
-        /* Tab 1 Grid */
+        .strip-main {
+          font-size: 0.95rem;
+          color: #f6f3ec;
+        }
+
+        .strip-edit-btn {
+          background: none;
+          border: 1px solid rgba(246, 243, 236, 0.3);
+          border-radius: 9999px;
+          padding: 0.35rem 0.9rem;
+          color: #f6f3ec;
+          font-size: 0.72rem;
+          cursor: pointer;
+        }
+
+        .step2-intro {
+          text-align: center;
+          max-width: 620px;
+          margin: 0 auto 2rem;
+        }
+
+        .step2-intro h3 {
+          font-family: var(--font-serif);
+          font-size: 1.6rem;
+          color: #f6f3ec;
+          margin-bottom: 0.5rem;
+        }
+
+        .step2-intro p {
+          font-size: 0.94rem;
+          color: rgba(246, 243, 236, 0.76);
+        }
+
         .estados-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -802,7 +927,7 @@ export default function AfinadorSintonia() {
           color: rgba(246, 243, 236, 0.6);
         }
 
-        .estado-card h3 {
+        .estado-card h4 {
           font-family: var(--font-serif);
           font-size: 1.45rem;
           font-weight: 400;
@@ -838,11 +963,6 @@ export default function AfinadorSintonia() {
           cursor: pointer;
         }
 
-        .texture-preview-btn:hover {
-          border-color: #b89768;
-          color: #b89768;
-        }
-
         .start-pause-btn {
           background-color: #b89768;
           border: none;
@@ -857,58 +977,7 @@ export default function AfinadorSintonia() {
           cursor: pointer;
         }
 
-        /* Tab 2 Natal Card */
-        .natal-card {
-          max-width: 620px;
-          margin: 0 auto;
-          background: rgba(246, 243, 236, 0.06);
-          border: 1px solid rgba(184, 151, 104, 0.35);
-          border-radius: 16px;
-          padding: 2.25rem 2rem;
-          text-align: center;
-        }
-
-        .natal-card h3 {
-          font-family: var(--font-serif);
-          font-size: 1.6rem;
-          color: #f6f3ec;
-          margin-bottom: 0.75rem;
-        }
-
-        .natal-card p {
-          font-size: 0.95rem;
-          font-weight: 300;
-          color: rgba(246, 243, 236, 0.78);
-          line-height: 1.7;
-          margin-bottom: 1.5rem;
-        }
-
-        .natal-input-row {
-          display: flex;
-          gap: 0.85rem;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-
-        .natal-input-row input[type='date'] {
-          min-height: 46px;
-          padding: 0.65rem 1rem;
-          border-radius: 9999px;
-          border: 1px solid rgba(184, 151, 104, 0.55);
-          background-color: #f6f3ec;
-          color: #1d221f;
-          font-family: var(--font-main);
-          font-size: 0.95rem;
-        }
-
-        .natal-error {
-          color: #f3c6c6 !important;
-          margin-top: 1rem;
-          margin-bottom: 0 !important;
-          font-size: 0.88rem !important;
-        }
-
-        /* Breathing Stage */
+        /* Paso 3A: Breathing */
         .breathing-stage {
           display: flex;
           flex-direction: column;
@@ -1030,19 +1099,19 @@ export default function AfinadorSintonia() {
           background-color: #b89768;
           border: 1px solid #b89768;
           border-radius: 9999px;
-          padding: 0.75rem 1.5rem;
+          padding: 0.8rem 1.6rem;
           color: #2c3a33;
           font-family: var(--font-main);
-          font-size: 0.75rem;
+          font-size: 0.76rem;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.12em;
           cursor: pointer;
         }
 
-        /* Receta Editorial + Vista Colega */
+        /* Paso 3B: Resultado Integrado */
         .receta-editorial {
-          max-width: 740px;
+          max-width: 760px;
           margin: 0 auto;
           background-color: #f6f3ec;
           color: #1d221f;
@@ -1101,12 +1170,13 @@ export default function AfinadorSintonia() {
           background-color: rgba(184, 151, 104, 0.22);
           color: #2c3a33;
           font-weight: 700;
-          margin-bottom: 0.45rem;
+          margin-bottom: 0.55rem;
         }
 
         .receta-sub {
-          font-size: 0.9rem;
-          color: #7a746e;
+          font-size: 0.96rem;
+          color: #4f4b45;
+          line-height: 1.6;
         }
 
         .receta-question {
@@ -1115,7 +1185,14 @@ export default function AfinadorSintonia() {
           font-size: clamp(1.28rem, 2.8vw, 1.65rem);
           line-height: 1.5;
           color: #1d221f;
+          margin-bottom: 1rem;
+        }
+
+        .natal-secondary-question {
+          font-size: 0.9rem;
+          color: #5c5852;
           margin-bottom: 1.5rem;
+          line-height: 1.6;
         }
 
         .colega-panel {
@@ -1138,10 +1215,6 @@ export default function AfinadorSintonia() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 0.85rem;
-        }
-
-        .colega-full {
-          grid-column: 1 / -1;
         }
 
         .colega-label {
@@ -1173,6 +1246,16 @@ export default function AfinadorSintonia() {
           margin-bottom: 1.5rem;
         }
 
+        .receta-kicker {
+          display: block;
+          font-size: 0.68rem;
+          text-transform: uppercase;
+          letter-spacing: 0.16em;
+          color: #b89768;
+          font-weight: 700;
+          margin-bottom: 0.3rem;
+        }
+
         .nota-botanica-text {
           font-size: 0.96rem;
           line-height: 1.65;
@@ -1185,7 +1268,6 @@ export default function AfinadorSintonia() {
           font-weight: 600;
           color: #2c3a33;
           text-decoration: underline;
-          letter-spacing: 0.04em;
         }
 
         .freemium-cta-block {
@@ -1196,7 +1278,7 @@ export default function AfinadorSintonia() {
           font-size: 0.92rem;
           color: #5c5852;
           line-height: 1.65;
-          max-width: 560px;
+          max-width: 580px;
           margin: 0 auto 1.25rem;
         }
 
@@ -1206,35 +1288,6 @@ export default function AfinadorSintonia() {
           align-items: center;
           gap: 0.75rem;
           flex-wrap: wrap;
-        }
-
-        .receta-kicker {
-          display: block;
-          font-size: 0.68rem;
-          text-transform: uppercase;
-          letter-spacing: 0.16em;
-          color: #b89768;
-          font-weight: 700;
-          margin-bottom: 0.3rem;
-        }
-
-        .receta-prep-info h3 {
-          font-family: var(--font-serif);
-          font-size: 1.45rem;
-          color: #2c3a33;
-          margin-bottom: 0.2rem;
-        }
-
-        .receta-formula {
-          font-size: 0.85rem;
-          color: #7a746e;
-        }
-
-        .receta-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 0.55rem;
-          flex-shrink: 0;
         }
 
         .receta-cta {
@@ -1284,6 +1337,8 @@ export default function AfinadorSintonia() {
         }
 
         @media (max-width: 768px) {
+          .linear-steps,
+          .step1-fields,
           .estados-grid,
           .colega-grid {
             grid-template-columns: 1fr;
@@ -1291,17 +1346,6 @@ export default function AfinadorSintonia() {
 
           .receta-editorial {
             padding: 2rem 1.35rem;
-          }
-
-          .receta-footer {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-
-          .receta-actions,
-          .receta-cta,
-          .share-btn {
-            width: 100%;
           }
         }
       `}</style>

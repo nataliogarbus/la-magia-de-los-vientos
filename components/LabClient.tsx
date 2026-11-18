@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { PRODUCTS } from '@/lib/products';
 import AfinadorSintonia from '@/components/AfinadorSintonia';
+import LibretaEvolucion from '@/components/LibretaEvolucion';
 import ModoEscuchaPlayer from '@/components/ModoEscuchaPlayer';
 
 const CURADURIA_SONORA: Record<string, { clima: string; playlist: string; nota: string }> = {
@@ -100,10 +101,13 @@ export default function LabClient() {
         </div>
       </section>
 
-      {/* 2. Instrumento de Sintonía Emocional (Dual Entry) */}
+      {/* 2. Instrumento de Sintonía Emocional (Camino Lineal 3 Pasos) */}
       <div id="afinador-sintonia">
         <AfinadorSintonia />
       </div>
+
+      {/* 3. Libreta Personal de Sintonía y Evolución */}
+      <LibretaEvolucion />
 
       {/* 3. Bento Grid: Curaduría Sonora con Imágenes Reales de Preparados */}
       <section className="bento-section">
