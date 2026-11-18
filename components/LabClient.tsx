@@ -114,7 +114,7 @@ export default function LabClient() {
               Conservatorio, Biodecodificación y <em>Flores de Bach</em>
             </h2>
             <p>
-              Cada preparado magistral ($20.000 ARS) incluye una curaduría musical sugerida para acompañar tus 21 días de toma consciente.
+              Cada fórmula floral se acompaña de una curaduría musical sugerida para sostener tus 21 días de sintonía y escucha consciente.
             </p>
           </div>
 
@@ -159,7 +159,6 @@ export default function LabClient() {
                   <span className="bento-chip light">
                     {CURADURIA_SONORA['sos-rescate'].nota}
                   </span>
-                  <span className="bento-price">$20.000</span>
                 </div>
 
                 <div className="product-thumb-row">
@@ -184,7 +183,7 @@ export default function LabClient() {
                   <p className="sound-box-sub">{CURADURIA_SONORA['sos-rescate'].clima}</p>
                 </div>
                 <Link href={`/tienda/${featuredProducts[0].slug}`} className="bento-link light">
-                  Ver Preparado →
+                  Conocer más sobre esta esencia →
                 </Link>
               </article>
             )}
@@ -202,7 +201,6 @@ export default function LabClient() {
                 <article key={product.id} className={`bento-card bento-cream ${spanClass}`}>
                   <div className="bento-card-top">
                     <span className="bento-chip">{sound.nota}</span>
-                    <span className="bento-price">${product.price.toLocaleString('es-AR')}</span>
                   </div>
 
                   <div className="product-thumb-row">
@@ -228,7 +226,7 @@ export default function LabClient() {
                   </div>
 
                   <Link href={`/tienda/${product.slug}`} className="bento-link">
-                    Ver Preparado →
+                    Conocer más sobre esta esencia →
                   </Link>
                 </article>
               );

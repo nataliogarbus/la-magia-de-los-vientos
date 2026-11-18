@@ -378,16 +378,16 @@ export default function AfinadorSintonia() {
 
   const handleShare = async () => {
     if (!result) return;
-    const shareText = `Mi sintonía en La Magia de los Vientos:\n• ${result.tituloResultado}\n• Pregunta para hoy: "${result.preguntaIndagacion}"\n• Preparado sugerido: ${result.preparadoNombre}\n\nDescubrí tu sintonía en lamagiadelosvientos.com.ar`;
+    const shareText = `Mi Plan de Sintonía de 21 Días · La Magia de los Vientos:\n• Sintonía: ${result.tituloResultado}\n• Pregunta de indagación: "${result.preguntaIndagacion}"\n• Esencia vibracional sugerida: ${result.esenciaEje} (${result.preparadoNombre})\n\nEscuchá tu pausa sonora en lamagiadelosvientos.com.ar`;
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({
-          title: 'Mi Sintonía · La Magia de los Vientos',
+          title: 'Mi Plan de Sintonía · La Magia de los Vientos',
           text: shareText,
           url: window.location.href,
         });
-        setShareFeedback('Compartido');
+        setShareFeedback('Plan de 21 días compartido');
         return;
       } catch {
         // Si el usuario cancela o falla, caemos al portapapeles
@@ -396,8 +396,8 @@ export default function AfinadorSintonia() {
 
     try {
       await navigator.clipboard.writeText(shareText);
-      setShareFeedback('Tarjeta copiada para WhatsApp / Instagram');
-      setTimeout(() => setShareFeedback(null), 3000);
+      setShareFeedback('Plan de 21 días copiado para guardar o compartir');
+      setTimeout(() => setShareFeedback(null), 3500);
     } catch {
       setShareFeedback('No se pudo copiar automáticamente');
     }
@@ -627,18 +627,36 @@ export default function AfinadorSintonia() {
 
               <div className="receta-divider" />
 
-              <div className="receta-footer">
-                <div className="receta-prep-info">
-                  <span className="receta-kicker">Preparado Floral Sugerido</span>
-                  <h3>{result.preparadoNombre}</h3>
-                  <p className="receta-formula">Fórmula artesanal · $20.000 ARS</p>
-                </div>
-                <div className="receta-actions">
-                  <Link href={`/tienda/${result.preparadoSlug}`} className="receta-cta">
-                    Ver Preparado ($20.000)
-                  </Link>
+              <div className="nota-botanica-box">
+                <span className="receta-kicker">Nota Botánica &amp; Vibracional</span>
+                <p className="nota-botanica-text">
+                  Para acompañar esta frecuencia, la tradición floral trabaja con la esencia de{' '}
+                  <strong>{result.esenciaEje}</strong>, base de la fórmula{' '}
+                  <strong>{result.preparadoNombre}</strong>.
+                </p>
+                <Link href={`/tienda/${result.preparadoSlug}`} className="nota-botanica-link">
+                  Conocer más sobre esta esencia →
+                </Link>
+              </div>
+
+              <div className="freemium-cta-block">
+                <p className="freemium-desc">
+                  Guardá tu <strong>Plan de Sintonía de 21 días</strong> y sumate gratis a la{' '}
+                  <strong>Comunidad de WhatsApp de La Magia de los Vientos</strong> para recibir pausas sonoras y reflexiones semanales.
+                </p>
+                <div className="freemium-actions">
+                  <a
+                    href={`https://wa.me/5491149143734?text=${encodeURIComponent(
+                      `Hola Eliana! Acabo de hacer mi sintonía en la web (${result.tituloResultado}) y quiero sumarme a la Comunidad de WhatsApp para recibir las pausas sonoras y reflexiones semanales.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="receta-cta"
+                  >
+                    Sumarme a la Comunidad de WhatsApp
+                  </a>
                   <button type="button" onClick={handleShare} className="share-btn">
-                    Compartir mi sintonía
+                    Guardar Plan de 21 Días
                   </button>
                 </div>
               </div>
@@ -1146,13 +1164,48 @@ export default function AfinadorSintonia() {
           margin-bottom: 1.5rem;
         }
 
-        .receta-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 1.25rem;
+        .nota-botanica-box {
+          background-color: #eae3d5;
+          border-left: 3px solid #b89768;
+          border-radius: 10px;
+          padding: 1.25rem 1.35rem;
           text-align: left;
+          margin-bottom: 1.5rem;
+        }
+
+        .nota-botanica-text {
+          font-size: 0.96rem;
+          line-height: 1.65;
+          color: #1d221f;
+          margin-bottom: 0.65rem;
+        }
+
+        .nota-botanica-link {
+          font-size: 0.78rem;
+          font-weight: 600;
+          color: #2c3a33;
+          text-decoration: underline;
+          letter-spacing: 0.04em;
+        }
+
+        .freemium-cta-block {
           margin-bottom: 1.25rem;
+        }
+
+        .freemium-desc {
+          font-size: 0.92rem;
+          color: #5c5852;
+          line-height: 1.65;
+          max-width: 560px;
+          margin: 0 auto 1.25rem;
+        }
+
+        .freemium-actions {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
         }
 
         .receta-kicker {
