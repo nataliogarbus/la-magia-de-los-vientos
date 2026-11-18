@@ -1,10 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { PRODUCTS } from '@/lib/products';
 import SilencioEntreNotas from '@/components/SilencioEntreNotas';
-import SobreElianaSection from '@/components/SobreElianaSection';
 import ModoEscuchaPlayer from '@/components/ModoEscuchaPlayer';
 
 const CURADURIA_SONORA: Record<string, { clima: string; playlist: string; nota: string }> = {
@@ -41,7 +41,7 @@ export default function LabClient() {
 
   return (
     <div className="lab-page">
-      {/* Hero Editorial Sensorial */}
+      {/* 1. Hero Editorial Dividido (2 columnas) con Fotografía Real + Anillos SVG */}
       <section className="lab-hero">
         <div className="hero-halo-top" aria-hidden="true" />
         <div className="hero-halo-bottom" aria-hidden="true" />
@@ -65,32 +65,47 @@ export default function LabClient() {
             </div>
           </div>
 
-          {/* Elemento visual central animado: anillos armónicos */}
-          <div className="hero-resonance-col" aria-hidden="true">
-            <div className={`resonance-stage ${ambientActive ? 'active' : ''}`}>
-              <svg className="resonance-svg" viewBox="0 0 320 320" width="320" height="320">
-                <circle className="ring ring-1" cx="160" cy="160" r="52" />
-                <circle className="ring ring-2" cx="160" cy="160" r="88" />
-                <circle className="ring ring-3" cx="160" cy="160" r="124" />
-                <circle className="ring ring-4" cx="160" cy="160" r="152" />
+          {/* Fotografía real en arco orgánico + anillos concéntricos SVG */}
+          <div className="hero-visual-col">
+            <div className={`arch-frame-wrap ${ambientActive ? 'active' : ''}`}>
+              <svg
+                className="arch-rings-svg"
+                viewBox="0 0 380 440"
+                width="380"
+                height="440"
+                aria-hidden="true"
+              >
+                <circle className="ring ring-1" cx="190" cy="210" r="140" />
+                <circle className="ring ring-2" cx="190" cy="210" r="168" />
+                <circle className="ring ring-3" cx="190" cy="210" r="186" />
               </svg>
-              <div className="resonance-core">
-                <span className="core-symbol">♪</span>
-                <span className="core-caption">
-                  {ambientActive ? 'Frecuencia Activa' : 'Resonancia'}
-                </span>
+
+              <div className="arch-photo-frame">
+                <Image
+                  src="/hero-bg.png"
+                  alt="Handpan y armonización sonora en la naturaleza — La Magia de los Vientos"
+                  fill
+                  priority
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 900px) 90vw, 400px"
+                />
+                <div className="arch-photo-scrim" />
+                <div className="arch-status-pill">
+                  <span className="status-dot" />
+                  <span>{ambientActive ? 'Frecuencia Activa' : 'Resonancia · 432 Hz'}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Bloque Inmersivo: El Silencio entre Notas */}
+      {/* 2. Bloque Inmersivo: El Silencio entre Notas */}
       <div id="silencio-entre-notas">
         <SilencioEntreNotas />
       </div>
 
-      {/* Bento Grid: Curaduría Musical & Preparados */}
+      {/* 3. Bento Grid: Curaduría Sonora con Imágenes Reales de Preparados */}
       <section className="bento-section">
         <div className="container">
           <div className="bento-header">
@@ -99,17 +114,28 @@ export default function LabClient() {
               Conservatorio, Biodecodificación y <em>Flores de Bach</em>
             </h2>
             <p>
-              Cada preparado magistral ($20.000 ARS) se acompaña de una curaduría musical diseñada para sostener tu estado emocional durante los 21 días de toma.
+              Cada preparado magistral ($20.000 ARS) incluye una curaduría musical sugerida para acompañar tus 21 días de toma consciente.
             </p>
           </div>
 
           <div className="bento-grid">
-            {/* Tarjeta Manifiesto / Unión de disciplinas (Span 7) */}
+            {/* Tarjeta Manifiesto */}
             <article className="bento-card bento-manifesto">
               <div className="bento-card-top">
-                <span className="bento-chip">Método Integrativo</span>
-                <svg className="staff-svg" viewBox="0 0 120 28" width="96" height="22" fill="none" aria-hidden="true">
-                  <path d="M2 7h116M2 14h116M2 21h116" stroke="rgba(184,151,104,0.45)" strokeWidth="1" />
+                <span className="bento-chip light">Método Integrativo</span>
+                <svg
+                  className="staff-svg"
+                  viewBox="0 0 120 28"
+                  width="96"
+                  height="22"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M2 7h116M2 14h116M2 21h116"
+                    stroke="rgba(184,151,104,0.5)"
+                    strokeWidth="1"
+                  />
                   <circle cx="28" cy="14" r="3.5" fill="#B89768" />
                   <circle cx="62" cy="7" r="3.5" fill="#F6F3EC" />
                   <circle cx="94" cy="21" r="3.5" fill="#B89768" />
@@ -126,15 +152,32 @@ export default function LabClient() {
               </div>
             </article>
 
-            {/* Tarjeta 1: SOS Rescate (Span 5) */}
+            {/* Tarjeta 1: SOS Rescate con imagen real */}
             {featuredProducts[0] && (
               <article className="bento-card bento-sage">
                 <div className="bento-card-top">
-                  <span className="bento-chip light">{CURADURIA_SONORA['sos-rescate'].nota}</span>
+                  <span className="bento-chip light">
+                    {CURADURIA_SONORA['sos-rescate'].nota}
+                  </span>
                   <span className="bento-price">$20.000</span>
                 </div>
-                <h3>{featuredProducts[0].title}</h3>
-                <p>{featuredProducts[0].shortDesc}</p>
+
+                <div className="product-thumb-row">
+                  <div className="product-thumb dark">
+                    <Image
+                      src={featuredProducts[0].image}
+                      alt={featuredProducts[0].title}
+                      width={76}
+                      height={76}
+                      style={{ objectFit: 'contain' }}
+                    />
+                  </div>
+                  <div>
+                    <h3>{featuredProducts[0].title}</h3>
+                    <p className="product-short">{featuredProducts[0].shortDesc}</p>
+                  </div>
+                </div>
+
                 <div className="sound-box dark">
                   <span className="sound-box-label">Clima Musical</span>
                   <p className="sound-box-title">{CURADURIA_SONORA['sos-rescate'].playlist}</p>
@@ -146,7 +189,7 @@ export default function LabClient() {
               </article>
             )}
 
-            {/* Tarjeta 2, 3, 4, 5 en fila equilibrada */}
+            {/* Tarjetas 2 a 5 con imágenes reales */}
             {featuredProducts.slice(1).map((product, index) => {
               const sound = CURADURIA_SONORA[product.slug] || {
                 clima: 'Instrumental acústico suave',
@@ -161,8 +204,22 @@ export default function LabClient() {
                     <span className="bento-chip">{sound.nota}</span>
                     <span className="bento-price">${product.price.toLocaleString('es-AR')}</span>
                   </div>
-                  <h3>{product.title}</h3>
-                  <p>{product.shortDesc}</p>
+
+                  <div className="product-thumb-row">
+                    <div className="product-thumb">
+                      <Image
+                        src={product.image}
+                        alt={product.title}
+                        width={76}
+                        height={76}
+                        style={{ objectFit: 'contain' }}
+                      />
+                    </div>
+                    <div>
+                      <h3>{product.title}</h3>
+                      <p className="product-short">{product.shortDesc}</p>
+                    </div>
+                  </div>
 
                   <div className="sound-box">
                     <span className="sound-box-label">Playlist recomendada</span>
@@ -180,8 +237,59 @@ export default function LabClient() {
         </div>
       </section>
 
-      {/* Autoridad y Trayectoria de Eliana */}
-      <SobreElianaSection showConsultasLink={true} />
+      {/* 4. Sección Sobre Eliana & Método Musical (Verde Salvia + Fotografía Real) */}
+      <section className="eliana-metodo-section" aria-labelledby="eliana-metodo-titulo">
+        <div className="container eliana-metodo-grid">
+          <div className="eliana-photo-col">
+            <div className="eliana-photo-card">
+              <Image
+                src="/ritual-background.png"
+                alt="Espacio terapéutico y ritual botánico de Eliana — La Magia de los Vientos"
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 900px) 100vw, 480px"
+              />
+              <div className="eliana-photo-caption">
+                <span>Conservatorio de Música de San Martín · 3 Títulos</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="eliana-sage-card">
+            <span className="sage-eyebrow">SOBRE ELIANA & MÉTODO MUSICAL</span>
+            <h2 id="eliana-metodo-titulo">
+              Escucha Activa, <em>Silencio</em> y Comprensión Emocional
+            </h2>
+            <p>
+              Egresada del <strong>Conservatorio de Música de San Martín</strong> con 3 títulos académicos, Eliana trasladó la escucha fina de la música al acompañamiento terapéutico: atender tanto lo que se dice como los silencios y tensiones del cuerpo.
+            </p>
+            <p>
+              Su metodología integra <strong>El Silencio entre Notas</strong> con el enfoque de <strong>Biodecodificación Transgeneracional (&ldquo;Comprender para Sanar&rdquo;)</strong>, Terapia Floral de Bach, Gemoterapia y Yoga, acompañando de forma respetuosa y complementaria.
+            </p>
+
+            <div className="sage-pillars">
+              <span>Conservatorio de San Martín</span>
+              <span>Escucha Activa</span>
+              <span>El Silencio entre Notas</span>
+              <span>Comprender para Sanar</span>
+            </div>
+
+            <div className="sage-actions">
+              <a
+                href="https://wa.me/5491149143734?text=Hola%20Eliana%2C%20conoc%C3%AD%20tu%20enfoque%20musical%20y%20terap%C3%A9utico%20y%20me%20gustar%C3%ADa%20consultar%20por%20una%20sesi%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pill-cta-bronze"
+              >
+                Consultar con Eliana
+              </a>
+              <Link href="/consultas" className="pill-cta-ivory-outline">
+                Ver Sesiones
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Cápsula Sonora Flotante */}
       <ModoEscuchaPlayer onPlayingChange={setAmbientActive} />
@@ -192,31 +300,31 @@ export default function LabClient() {
           color: #1d221f;
         }
 
-        /* Hero Editorial */
+        /* 1. Hero Dividido */
         .lab-hero {
           position: relative;
-          padding: 6rem 0 5.5rem;
+          padding: 5rem 0 5.5rem;
           background-color: #f6f3ec;
           overflow: hidden;
-          border-bottom: 1px solid rgba(184, 151, 104, 0.25);
+          border-bottom: 1px solid rgba(184, 151, 104, 0.28);
         }
 
         .hero-halo-top {
           position: absolute;
-          top: -180px;
-          right: -100px;
+          top: -160px;
+          right: -80px;
           width: 540px;
           height: 540px;
-          background: radial-gradient(circle, rgba(184, 151, 104, 0.2) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(184, 151, 104, 0.22) 0%, transparent 70%);
           pointer-events: none;
         }
 
         .hero-halo-bottom {
           position: absolute;
-          bottom: -200px;
-          left: -120px;
-          width: 520px;
-          height: 520px;
+          bottom: -180px;
+          left: -100px;
+          width: 500px;
+          height: 500px;
           background: radial-gradient(circle, rgba(44, 58, 51, 0.1) 0%, transparent 70%);
           pointer-events: none;
         }
@@ -225,8 +333,8 @@ export default function LabClient() {
           position: relative;
           z-index: 1;
           display: grid;
-          grid-template-columns: 1.15fr 0.85fr;
-          gap: 3rem;
+          grid-template-columns: 1.1fr 0.9fr;
+          gap: 3.5rem;
           align-items: center;
         }
 
@@ -242,7 +350,7 @@ export default function LabClient() {
 
         .lab-hero-copy h1 {
           font-family: var(--font-serif);
-          font-size: clamp(2.8rem, 6.2vw, 4.9rem);
+          font-size: clamp(2.8rem, 6vw, 4.8rem);
           font-weight: 400;
           line-height: 1.04;
           color: #1d221f;
@@ -287,7 +395,7 @@ export default function LabClient() {
 
         .pill-cta-primary:hover {
           transform: translateY(-2px);
-          box-shadow: 0 12px 28px rgba(44, 58, 51, 0.2);
+          box-shadow: 0 12px 28px rgba(44, 58, 51, 0.22);
         }
 
         .pill-cta-outline {
@@ -308,28 +416,32 @@ export default function LabClient() {
 
         .pill-cta-outline:hover {
           border-color: #b89768;
-          background-color: rgba(184, 151, 104, 0.1);
+          background-color: rgba(184, 151, 104, 0.12);
           transform: translateY(-2px);
         }
 
-        /* Anillos Armónicos */
-        .hero-resonance-col {
+        /* Arco Orgánico con Foto Real + Anillos SVG */
+        .hero-visual-col {
           display: flex;
           justify-content: center;
         }
 
-        .resonance-stage {
+        .arch-frame-wrap {
           position: relative;
-          width: 320px;
-          height: 320px;
+          width: 360px;
+          height: 430px;
           display: flex;
           align-items: center;
           justify-content: center;
         }
 
-        .resonance-svg {
+        .arch-rings-svg {
           position: absolute;
-          inset: 0;
+          inset: -10px;
+          width: calc(100% + 20px);
+          height: calc(100% + 20px);
+          pointer-events: none;
+          z-index: 2;
         }
 
         .ring {
@@ -339,46 +451,40 @@ export default function LabClient() {
         }
 
         .ring-1 {
-          stroke-width: 1.5;
+          stroke-width: 1.4;
           opacity: 0.55;
           animation: ripplePulse 6s ease-in-out infinite;
         }
 
         .ring-2 {
-          stroke-width: 1.1;
+          stroke-width: 1;
           opacity: 0.38;
           animation: ripplePulse 6s ease-in-out 1s infinite;
         }
 
         .ring-3 {
-          stroke-width: 0.9;
-          opacity: 0.24;
-          animation: ripplePulse 6s ease-in-out 2s infinite;
+          stroke-width: 0.8;
+          stroke-dasharray: 4 7;
+          opacity: 0.35;
+          animation: slowSpin 38s linear infinite;
         }
 
-        .ring-4 {
-          stroke-width: 0.75;
-          stroke-dasharray: 4 6;
-          opacity: 0.28;
-          animation: slowSpin 36s linear infinite;
-        }
-
-        .resonance-stage.active .ring-1,
-        .resonance-stage.active .ring-2,
-        .resonance-stage.active .ring-3 {
-          animation-duration: 2.8s;
+        .arch-frame-wrap.active .ring-1,
+        .arch-frame-wrap.active .ring-2 {
+          animation-duration: 2.6s;
           stroke: #2c3a33;
+          opacity: 0.75;
         }
 
         @keyframes ripplePulse {
           0%,
           100% {
-            transform: scale(0.96);
-            opacity: 0.25;
+            transform: scale(0.97);
+            opacity: 0.28;
           }
           50% {
-            transform: scale(1.05);
-            opacity: 0.65;
+            transform: scale(1.04);
+            opacity: 0.7;
           }
         }
 
@@ -391,46 +497,59 @@ export default function LabClient() {
           }
         }
 
-        .resonance-core {
+        .arch-photo-frame {
           position: relative;
-          z-index: 2;
-          width: 96px;
-          height: 96px;
-          border-radius: 9999px;
-          background-color: #2c3a33;
-          color: #f6f3ec;
-          display: flex;
-          flex-direction: column;
+          width: 310px;
+          height: 390px;
+          border-radius: 9999px 9999px 24px 24px;
+          overflow: hidden;
+          border: 2px solid rgba(184, 151, 104, 0.55);
+          box-shadow: 0 28px 60px rgba(44, 58, 51, 0.18);
+          background-color: #eae3d5;
+          z-index: 1;
+        }
+
+        .arch-photo-scrim {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, transparent 55%, rgba(44, 58, 51, 0.55) 100%);
+        }
+
+        .arch-status-pill {
+          position: absolute;
+          bottom: 1rem;
+          left: 50%;
+          transform: translateX(-50%);
+          display: inline-flex;
           align-items: center;
-          justify-content: center;
-          box-shadow: 0 20px 45px rgba(44, 58, 51, 0.22);
-          transition: transform 0.4s ease, background-color 0.4s ease;
-        }
-
-        .resonance-stage.active .resonance-core {
-          background-color: #b89768;
-          color: #2c3a33;
-          transform: scale(1.08);
-        }
-
-        .core-symbol {
-          font-family: var(--font-serif);
-          font-size: 1.65rem;
-          line-height: 1;
-        }
-
-        .core-caption {
-          font-size: 0.6rem;
+          gap: 0.45rem;
+          background: rgba(246, 243, 236, 0.88);
+          backdrop-filter: blur(10px);
+          color: #1d221f;
+          padding: 0.35rem 0.9rem;
+          border-radius: 9999px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          letter-spacing: 0.14em;
-          margin-top: 0.25rem;
-          opacity: 0.85;
+          white-space: nowrap;
         }
 
-        /* Bento Grid */
+        .status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 9999px;
+          background-color: #b89768;
+        }
+
+        .arch-frame-wrap.active .status-dot {
+          background-color: #2c3a33;
+        }
+
+        /* 3. Bento Grid */
         .bento-section {
           padding: 6.5rem 0;
-          background-color: #f6f3ec;
+          background-color: #eae3d5;
         }
 
         .bento-header {
@@ -445,7 +564,7 @@ export default function LabClient() {
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.26em;
-          color: #b89768;
+          color: #2c3a33;
           margin-bottom: 0.9rem;
         }
 
@@ -465,7 +584,7 @@ export default function LabClient() {
         .bento-header p {
           font-size: 1rem;
           font-weight: 300;
-          color: #5c5852;
+          color: #4f4b45;
           line-height: 1.75;
         }
 
@@ -485,26 +604,27 @@ export default function LabClient() {
 
         .bento-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 22px 48px rgba(44, 58, 51, 0.1);
+          box-shadow: 0 22px 48px rgba(44, 58, 51, 0.12);
         }
 
         .bento-manifesto {
           grid-column: span 7;
           background-color: #2c3a33;
           color: #f6f3ec;
-          border: 1px solid rgba(184, 151, 104, 0.35);
+          border: 1px solid rgba(184, 151, 104, 0.4);
         }
 
         .bento-sage {
           grid-column: span 5;
           background-color: #2c3a33;
           color: #f6f3ec;
-          border: 1px solid rgba(184, 151, 104, 0.35);
+          border: 1px solid rgba(184, 151, 104, 0.4);
         }
 
         .bento-cream {
-          background-color: #ffffff;
-          border: 1px solid rgba(184, 151, 104, 0.35);
+          background-color: #f6f3ec;
+          color: #1d221f;
+          border: 1px solid rgba(184, 151, 104, 0.4);
         }
 
         .bento-wide {
@@ -530,11 +650,10 @@ export default function LabClient() {
           letter-spacing: 0.14em;
           padding: 0.3rem 0.8rem;
           border-radius: 9999px;
-          background-color: rgba(184, 151, 104, 0.16);
+          background-color: rgba(44, 58, 51, 0.1);
           color: #2c3a33;
         }
 
-        .bento-manifesto .bento-chip,
         .bento-chip.light {
           background-color: rgba(184, 151, 104, 0.22);
           color: #f6f3ec;
@@ -542,24 +661,24 @@ export default function LabClient() {
 
         .bento-price {
           font-family: var(--font-serif);
-          font-size: 1.25rem;
+          font-size: 1.3rem;
           color: inherit;
         }
 
-        .bento-card h3 {
+        .bento-manifesto h3 {
           font-family: var(--font-serif);
-          font-size: 1.5rem;
+          font-size: 1.65rem;
           font-weight: 400;
-          color: inherit;
-          margin-bottom: 0.65rem;
+          color: #f6f3ec;
+          margin-bottom: 0.75rem;
         }
 
-        .bento-card > p {
-          font-size: 0.95rem;
+        .bento-manifesto > p {
+          font-size: 0.98rem;
           font-weight: 300;
-          line-height: 1.7;
-          opacity: 0.82;
-          margin-bottom: 1.35rem;
+          line-height: 1.75;
+          color: rgba(246, 243, 236, 0.82);
+          margin-bottom: 1.5rem;
         }
 
         .manifesto-pillars {
@@ -579,8 +698,48 @@ export default function LabClient() {
           color: #f6f3ec;
         }
 
+        .product-thumb-row {
+          display: flex;
+          align-items: center;
+          gap: 1.1rem;
+          margin-bottom: 1.35rem;
+        }
+
+        .product-thumb {
+          width: 82px;
+          height: 82px;
+          flex-shrink: 0;
+          border-radius: 12px;
+          background-color: #ffffff;
+          border: 1px solid rgba(184, 151, 104, 0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.35rem;
+        }
+
+        .product-thumb.dark {
+          background-color: rgba(246, 243, 236, 0.1);
+          border-color: rgba(184, 151, 104, 0.4);
+        }
+
+        .product-thumb-row h3 {
+          font-family: var(--font-serif);
+          font-size: 1.4rem;
+          font-weight: 400;
+          color: inherit;
+          margin-bottom: 0.3rem;
+        }
+
+        .product-short {
+          font-size: 0.88rem;
+          font-weight: 300;
+          line-height: 1.55;
+          opacity: 0.82;
+        }
+
         .sound-box {
-          background-color: #f6f3ec;
+          background-color: #ffffff;
           border-left: 3px solid #b89768;
           border-radius: 8px;
           padding: 0.9rem 1rem;
@@ -589,7 +748,7 @@ export default function LabClient() {
         }
 
         .sound-box.dark {
-          background-color: rgba(246, 243, 236, 0.07);
+          background-color: rgba(246, 243, 236, 0.08);
         }
 
         .sound-box-label {
@@ -610,7 +769,7 @@ export default function LabClient() {
 
         .sound-box-sub {
           font-size: 0.8rem;
-          opacity: 0.72;
+          opacity: 0.75;
         }
 
         .bento-link {
@@ -626,9 +785,159 @@ export default function LabClient() {
           color: #b89768;
         }
 
+        /* 4. Sobre Eliana & Método Musical */
+        .eliana-metodo-section {
+          padding: 6.5rem 0;
+          background-color: #f6f3ec;
+        }
+
+        .eliana-metodo-grid {
+          display: grid;
+          grid-template-columns: 0.85fr 1.15fr;
+          gap: 2.5rem;
+          align-items: stretch;
+        }
+
+        .eliana-photo-card {
+          position: relative;
+          min-height: 440px;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid rgba(184, 151, 104, 0.45);
+          box-shadow: 0 24px 54px rgba(44, 58, 51, 0.14);
+        }
+
+        .eliana-photo-caption {
+          position: absolute;
+          bottom: 1.25rem;
+          left: 1.25rem;
+          right: 1.25rem;
+          background: rgba(44, 58, 51, 0.88);
+          backdrop-filter: blur(8px);
+          color: #f6f3ec;
+          padding: 0.75rem 1rem;
+          border-radius: 12px;
+          font-size: 0.76rem;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          text-align: center;
+        }
+
+        .eliana-sage-card {
+          background-color: #2c3a33;
+          color: #f6f3ec;
+          border-radius: 20px;
+          padding: 3rem 2.75rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          box-shadow: 0 24px 54px rgba(44, 58, 51, 0.16);
+        }
+
+        .sage-eyebrow {
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.24em;
+          color: #b89768;
+          margin-bottom: 1rem;
+        }
+
+        .eliana-sage-card h2 {
+          font-family: var(--font-serif);
+          font-size: clamp(1.9rem, 3.4vw, 2.55rem);
+          font-weight: 400;
+          color: #f6f3ec;
+          line-height: 1.18;
+          margin-bottom: 1.5rem;
+        }
+
+        .eliana-sage-card em {
+          font-style: italic;
+          color: #b89768;
+        }
+
+        .eliana-sage-card p {
+          font-size: 0.98rem;
+          font-weight: 300;
+          color: rgba(246, 243, 236, 0.84);
+          line-height: 1.8;
+          margin-bottom: 1.1rem;
+        }
+
+        .eliana-sage-card strong {
+          color: #f6f3ec;
+          font-weight: 500;
+        }
+
+        .sage-pillars {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.55rem;
+          margin: 1rem 0 2rem;
+        }
+
+        .sage-pillars span {
+          font-size: 0.7rem;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          padding: 0.38rem 0.85rem;
+          border-radius: 9999px;
+          border: 1px solid rgba(184, 151, 104, 0.45);
+          color: #b89768;
+        }
+
+        .sage-actions {
+          display: flex;
+          gap: 0.85rem;
+          flex-wrap: wrap;
+        }
+
+        .pill-cta-bronze {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #b89768;
+          color: #2c3a33;
+          padding: 0.9rem 1.7rem;
+          border-radius: 9999px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          transition: transform 0.25s ease;
+        }
+
+        .pill-cta-bronze:hover {
+          transform: translateY(-2px);
+        }
+
+        .pill-cta-ivory-outline {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid rgba(246, 243, 236, 0.35);
+          color: #f6f3ec;
+          padding: 0.9rem 1.7rem;
+          border-radius: 9999px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          transition: border-color 0.25s ease;
+        }
+
+        .pill-cta-ivory-outline:hover {
+          border-color: #b89768;
+        }
+
         @media (max-width: 900px) {
-          .lab-hero-grid {
+          .lab-hero-grid,
+          .eliana-metodo-grid {
             grid-template-columns: 1fr;
+          }
+
+          .lab-hero-copy {
             text-align: center;
           }
 
@@ -646,6 +955,14 @@ export default function LabClient() {
           .bento-wide,
           .bento-compact {
             grid-column: span 12;
+          }
+
+          .eliana-photo-card {
+            min-height: 320px;
+          }
+
+          .eliana-sage-card {
+            padding: 2.25rem 1.5rem;
           }
         }
       `}</style>
