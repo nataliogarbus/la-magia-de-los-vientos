@@ -93,6 +93,52 @@ export class AmbientSoundEngine {
     }
   }
 
+  public playContrastTexture(kind: 'ruido-mental' | 'tension' | 'desanimo') {
+    if (typeof window === 'undefined') return;
+
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+    gain.connect(ctx.destination);
+
+    const patterns: Record<typeof kind, number[]> = {
+      'ruido-mental': [523.25, 554.37, 587.33, 523.25, 622.25, 587.33], // pulso rápido inquieto
+      tension: [220.0, 233.08, 220.0, 233.08], // segunda menor tensa
+      desanimo: [293.66, 261.63, 220.0, 196.0], // descenso apagado
+    };
+
+    const notes = patterns[kind];
+    const stepDur = kind === 'ruido-mental' ? 0.22 : 0.45;
+
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const noteGain = ctx.createGain();
+      const startAt = ctx.currentTime + i * stepDur;
+
+      osc.type = kind === 'tension' ? 'sawtooth' : 'triangle';
+      osc.frequency.setValueAtTime(freq, startAt);
+
+      noteGain.gain.setValueAtTime(0.001, startAt);
+      noteGain.gain.exponentialRampToValueAtTime(0.06, startAt + 0.04);
+      noteGain.gain.exponentialRampToValueAtTime(0.001, startAt + stepDur);
+
+      osc.connect(noteGain);
+      noteGain.connect(gain);
+      osc.start(startAt);
+      osc.stop(startAt + stepDur + 0.02);
+    });
+
+    gain.gain.setValueAtTime(1, ctx.currentTime);
+    setTimeout(() => {
+      ctx.close().catch(() => {});
+    }, notes.length * stepDur * 1000 + 250);
+  }
+
   public stop() {
     if (!this.ctx) {
       this.isPlaying = false;

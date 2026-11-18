@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { PRODUCTS } from '@/lib/products';
-import SilencioEntreNotas from '@/components/SilencioEntreNotas';
+import AfinadorSintonia from '@/components/AfinadorSintonia';
 import ModoEscuchaPlayer from '@/components/ModoEscuchaPlayer';
 
 const CURADURIA_SONORA: Record<string, { clima: string; playlist: string; nota: string }> = {
@@ -48,16 +48,16 @@ export default function LabClient() {
 
         <div className="container lab-hero-grid">
           <div className="lab-hero-copy">
-            <span className="lab-eyebrow">LABORATORIO SENSORIAL · VISTA PREVIA</span>
+            <span className="lab-eyebrow">COMPRENDER PARA SANAR · ESCUCHA ACTIVA</span>
             <h1>
-              La <em>Escucha</em> como <em>Medicina</em>
+              Donde el <em>silencio</em> da sentido a la <em>música</em>
             </h1>
             <p className="lab-subtitle">
-              Una experiencia donde la formación académica del Conservatorio, las Flores de Bach y la Biodecodificación Transgeneracional dialogan en un mismo pulso.
+              Así como cada nota necesita una pausa para resonar, comprender lo que nos pasa empieza por detener el ruido cotidiano y escuchar con calma lo que nuestra historia intenta decir.
             </p>
             <div className="lab-hero-actions">
-              <a href="#silencio-entre-notas" className="pill-cta-primary">
-                Iniciar Pausa de 60 Segundos
+              <a href="#afinador-sintonia" className="pill-cta-primary">
+                Abrir Afinador de Sintonía
               </a>
               <Link href="/consultas" className="pill-cta-outline">
                 Explorar Sesiones
@@ -100,9 +100,9 @@ export default function LabClient() {
         </div>
       </section>
 
-      {/* 2. Bloque Inmersivo: El Silencio entre Notas */}
-      <div id="silencio-entre-notas">
-        <SilencioEntreNotas />
+      {/* 2. Instrumento de Sintonía Emocional (Dual Entry) */}
+      <div id="afinador-sintonia">
+        <AfinadorSintonia />
       </div>
 
       {/* 3. Bento Grid: Curaduría Sonora con Imágenes Reales de Preparados */}

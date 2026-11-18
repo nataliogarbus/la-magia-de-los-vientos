@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit, Playfair_Display } from "next/font/google";
 import "./main.css";
 
@@ -6,7 +6,17 @@ const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ["latin"], variable: '--font-outfit' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
 
+export const viewport: Viewport = {
+  themeColor: "#2C3A33",
+};
+
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "La Magia",
+  },
   metadataBase: new URL('https://lamagiadelosvientos.com.ar'),
   title: {
     default: "La Magia de los Vientos | Terapia Floral & Bienestar Natural · Moreno",
