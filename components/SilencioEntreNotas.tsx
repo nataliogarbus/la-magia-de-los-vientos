@@ -7,6 +7,7 @@ import { AmbientSoundEngine, SoundMood } from '@/lib/ambient-audio';
 interface EstadoOption {
   id: Exclude<SoundMood, 'ambient'>;
   titulo: string;
+  subtitulo: string;
   descripcion: string;
   climaSonoro: string;
   preguntaIndagacion: string;
@@ -19,7 +20,8 @@ const ESTADOS: EstadoOption[] = [
   {
     id: 'ruido-mental',
     titulo: 'Ruido mental',
-    descripcion: 'Pensamiento circular, hiperexigencia o dificultad para desconectar.',
+    subtitulo: 'Pensamiento circular',
+    descripcion: 'Hiperexigencia, diálogo interno constante o dificultad para aquietar la mente.',
     climaSonoro: 'Armónicos graves en Sol abierto · Enraizamiento y pausa',
     preguntaIndagacion:
       '¿Qué conversación pendiente o exigencia estás intentando resolver en tu mente ahora mismo, cuando en realidad necesita pausa?',
@@ -30,8 +32,9 @@ const ESTADOS: EstadoOption[] = [
   {
     id: 'tension',
     titulo: 'Tensión',
-    descripcion: 'Rigidez en hombros o cuello, estado de alerta o sensación de urgencia.',
-    climaSonoro: 'Acorde cálido en La suspendido · Distensión muscular y respiración',
+    subtitulo: 'Cuerpo en alerta',
+    descripcion: 'Rigidez en hombros o mandíbula, urgencia interna o sensación de sobrecarga.',
+    climaSonoro: 'Acorde cálido en La suspendido · Distensión y respiración',
     preguntaIndagacion:
       '¿De qué situación o responsabilidad sentís que tenés que hacerte cargo en este instante, y qué pasaría si soltaras el control por un minuto?',
     preparadoNombre: 'SOS Rescate',
@@ -41,8 +44,9 @@ const ESTADOS: EstadoOption[] = [
   {
     id: 'desanimo',
     titulo: 'Desánimo',
-    descripcion: 'Cansancio emocional, apatía o pérdida temporal de impulso vital.',
-    climaSonoro: 'Intervalos abiertos en Fa mayor 7 · Apertura y calidez serena',
+    subtitulo: 'Pulso apagado',
+    descripcion: 'Cansancio emocional, apatía o desconexión temporal con tu impulso vital.',
+    climaSonoro: 'Intervalos abiertos en Fa mayor 7 · Luminosidad serena',
     preguntaIndagacion:
       '¿En qué momento reciente dejaste de escuchar tu propio deseo para priorizar únicamente lo que sentías que "había que hacer"?',
     preparadoNombre: 'Ánimo & Vitalidad',
@@ -121,90 +125,100 @@ export default function SilencioEntreNotas() {
   };
 
   const progress = ((TOTAL_SECONDS - secondsLeft) / TOTAL_SECONDS) * 100;
-  const circumference = 2 * Math.PI * 54;
+  const circumference = 2 * Math.PI * 82;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   const breathCue =
     secondsLeft % 12 >= 8
-      ? 'Inhalá lento por la nariz...'
+      ? 'Inhalá lento, abriendo el pecho...'
       : secondsLeft % 12 >= 4
-      ? 'Sostené el aire con suavidad...'
-      : 'Exhalá despacio y soltá los hombros...';
+      ? 'Sostené el silencio entre notas...'
+      : 'Exhalá largo y soltá el peso...';
 
   return (
     <section className="silencio-section" aria-labelledby="silencio-titulo">
+      <div className="silencio-halo" aria-hidden="true" />
       <div className="container">
-        <div className="silencio-card">
+        <div className="silencio-sanctuary">
           <div className="silencio-header">
-            <span className="silencio-eyebrow">EXPERIENCIA INTERACTIVA · 60 SEGUNDOS</span>
-            <h2 id="silencio-titulo">El Silencio entre Notas</h2>
+            <span className="silencio-eyebrow">PAUSA SENSORIAL · 60 SEGUNDOS</span>
+            <h2 id="silencio-titulo">
+              El <em>Silencio</em> entre Notas
+            </h2>
             <p className="silencio-lead">
-              Elegí cómo se siente tu sistema nervioso hoy. Regalate una pausa sonora de un minuto antes de pasar a la palabra.
+              Antes de buscar respuestas afuera, escuchá cómo suena tu cuerpo hoy. Elegí tu estado actual para iniciar una pausa acústica de un minuto.
             </p>
           </div>
 
           {phase === 'select' && (
             <div className="estados-grid">
-              {ESTADOS.map((estado) => (
+              {ESTADOS.map((estado, idx) => (
                 <button
                   key={estado.id}
                   type="button"
                   onClick={() => startPause(estado.id)}
-                  className="estado-btn"
+                  className="estado-card"
                 >
-                  <span className="estado-tag">Pausa de 60s</span>
+                  <div className="estado-top">
+                    <span className="estado-num">0{idx + 1}</span>
+                    <span className="estado-sub">{estado.subtitulo}</span>
+                  </div>
                   <h3>{estado.titulo}</h3>
                   <p>{estado.descripcion}</p>
-                  <span className="estado-cta">Iniciar escucha →</span>
+                  <span className="estado-action">Iniciar pausa de 60s →</span>
                 </button>
               ))}
             </div>
           )}
 
           {phase === 'running' && selectedEstado && (
-            <div className="timer-stage" aria-live="polite">
-              <div className="timer-ring-wrap">
-                <svg className="timer-svg" viewBox="0 0 128 128" width="160" height="160">
+            <div className="breathing-stage" aria-live="polite">
+              <div className={`organic-orb-wrap ${isPaused ? 'paused' : ''}`}>
+                <div className="orb-aura" />
+                <div className="orb-core" />
+                <svg className="orb-progress-svg" viewBox="0 0 180 180" width="220" height="220">
                   <circle
-                    cx="64"
-                    cy="64"
-                    r="54"
+                    cx="90"
+                    cy="90"
+                    r="82"
                     fill="none"
-                    stroke="rgba(255,255,255,0.16)"
-                    strokeWidth="3"
+                    stroke="rgba(246, 243, 236, 0.14)"
+                    strokeWidth="2"
                   />
                   <circle
-                    cx="64"
-                    cy="64"
-                    r="54"
+                    cx="90"
+                    cy="90"
+                    r="82"
                     fill="none"
-                    stroke="var(--color-accent)"
-                    strokeWidth="3"
+                    stroke="#B89768"
+                    strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeDasharray={circumference}
                     strokeDashoffset={strokeDashoffset}
-                    transform="rotate(-90 64 64)"
+                    transform="rotate(-90 90 90)"
                   />
                 </svg>
-                <div className="timer-readout">
-                  <span className="timer-seconds">
+                <div className="orb-readout">
+                  <span className="orb-time">
                     0:{secondsLeft.toString().padStart(2, '0')}
                   </span>
-                  <span className="timer-state-name">{selectedEstado.titulo}</span>
+                  <span className="orb-state">{selectedEstado.titulo}</span>
                 </div>
               </div>
 
-              <p className="breath-cue">{isPaused ? 'Pausa en silencio' : breathCue}</p>
-              <p className="sound-mood-caption">{selectedEstado.climaSonoro}</p>
+              <p className="poetic-breath">
+                {isPaused ? 'En quietud voluntaria' : breathCue}
+              </p>
+              <p className="mood-caption">{selectedEstado.climaSonoro}</p>
 
               <div className="timer-controls">
-                <button type="button" onClick={togglePause} className="btn-ghost-light">
-                  {isPaused ? 'Reanudar audio' : 'Pausar'}
+                <button type="button" onClick={togglePause} className="pill-btn-light">
+                  {isPaused ? 'Reanudar' : 'Pausar'}
                 </button>
-                <button type="button" onClick={completeNow} className="btn-ghost-light">
-                  Ir a la reflexión
+                <button type="button" onClick={completeNow} className="pill-btn-accent">
+                  Ir a la receta editorial
                 </button>
-                <button type="button" onClick={resetModule} className="btn-ghost-light">
+                <button type="button" onClick={resetModule} className="pill-btn-light">
                   Cambiar estado
                 </button>
               </div>
@@ -212,29 +226,33 @@ export default function SilencioEntreNotas() {
           )}
 
           {phase === 'complete' && selectedEstado && (
-            <div className="reflection-stage" aria-live="polite">
-              <span className="reflection-badge">Enfoque &ldquo;Comprender para Sanar&rdquo;</span>
-              <blockquote className="reflection-question">
+            <div className="receta-editorial" aria-live="polite">
+              <div className="receta-header">
+                <span className="receta-rx">Rx · Comprender para Sanar</span>
+                <span className="receta-estado">{selectedEstado.titulo}</span>
+              </div>
+
+              <blockquote className="receta-question">
                 &ldquo;{selectedEstado.preguntaIndagacion}&rdquo;
               </blockquote>
 
-              <div className="suggested-prep-box">
-                <div>
-                  <span className="prep-kicker">Preparado floral sugerido · {selectedEstado.titulo}</span>
+              <div className="receta-divider" />
+
+              <div className="receta-footer">
+                <div className="receta-prep-info">
+                  <span className="receta-kicker">Preparado Floral Sugerido</span>
                   <h3>{selectedEstado.preparadoNombre}</h3>
-                  <p className="prep-formula">{selectedEstado.preparadoFormula}</p>
+                  <p className="receta-formula">{selectedEstado.preparadoFormula}</p>
                 </div>
-                <div className="prep-actions">
-                  <Link
-                    href={`/tienda/${selectedEstado.preparadoSlug}`}
-                    className="btn-accent-solid"
-                  >
-                    Ver Preparado ($20.000)
-                  </Link>
-                </div>
+                <Link
+                  href={`/tienda/${selectedEstado.preparadoSlug}`}
+                  className="receta-cta"
+                >
+                  Explorar Fórmula ($20.000)
+                </Link>
               </div>
 
-              <button type="button" onClick={resetModule} className="reset-link">
+              <button type="button" onClick={resetModule} className="receta-reset">
                 Realizar otra pausa sonora
               </button>
             </div>
@@ -244,22 +262,35 @@ export default function SilencioEntreNotas() {
 
       <style jsx>{`
         .silencio-section {
+          position: relative;
           padding: 5.5rem 0;
-          background-color: var(--background);
+          background-color: #2c3a33;
+          color: #f6f3ec;
+          overflow: hidden;
         }
 
-        .silencio-card {
-          background-color: var(--color-primary);
-          color: var(--color-secondary);
-          border-radius: var(--radius);
-          padding: 3.5rem 2.5rem;
-          box-shadow: var(--shadow-md);
+        .silencio-halo {
+          position: absolute;
+          top: -20%;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 780px;
+          height: 780px;
+          background: radial-gradient(circle, rgba(184, 151, 104, 0.16) 0%, transparent 65%);
+          pointer-events: none;
+        }
+
+        .silencio-sanctuary {
+          position: relative;
+          z-index: 1;
+          max-width: 960px;
+          margin: 0 auto;
         }
 
         .silencio-header {
           text-align: center;
-          max-width: 640px;
-          margin: 0 auto 2.75rem;
+          max-width: 650px;
+          margin: 0 auto 3.25rem;
         }
 
         .silencio-eyebrow {
@@ -267,139 +298,200 @@ export default function SilencioEntreNotas() {
           font-size: 0.72rem;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 0.25em;
-          color: var(--color-accent);
-          margin-bottom: 0.9rem;
+          letter-spacing: 0.28em;
+          color: #b89768;
+          margin-bottom: 1rem;
         }
 
         .silencio-header h2 {
           font-family: var(--font-serif);
-          font-size: clamp(1.9rem, 4vw, 2.75rem);
+          font-size: clamp(2.1rem, 4.5vw, 3.2rem);
           font-weight: 400;
-          color: var(--color-secondary);
-          margin-bottom: 0.9rem;
+          color: #f6f3ec;
+          margin-bottom: 1rem;
+          line-height: 1.15;
+        }
+
+        .silencio-header em {
+          font-style: italic;
+          color: #b89768;
         }
 
         .silencio-lead {
-          font-size: 1rem;
+          font-size: 1.02rem;
           font-weight: 300;
-          color: rgba(250, 250, 248, 0.78);
-          line-height: 1.75;
+          color: rgba(246, 243, 236, 0.78);
+          line-height: 1.8;
         }
 
         .estados-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 1.25rem;
+          gap: 1.35rem;
         }
 
-        .estado-btn {
+        .estado-card {
           text-align: left;
-          background-color: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(250, 250, 248, 0.18);
-          border-radius: var(--radius);
-          padding: 1.75rem 1.5rem;
-          color: var(--color-secondary);
+          background: rgba(246, 243, 236, 0.04);
+          border: 1px solid rgba(184, 151, 104, 0.3);
+          border-radius: 16px;
+          padding: 2rem 1.65rem;
+          color: #f6f3ec;
           cursor: pointer;
           display: flex;
           flex-direction: column;
-          transition: all 0.25s ease;
+          transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .estado-btn:hover {
-          background-color: rgba(255, 255, 255, 0.09);
-          border-color: var(--color-accent);
-          transform: translateY(-3px);
+        .estado-card:hover {
+          background: rgba(246, 243, 236, 0.09);
+          border-color: #b89768;
+          transform: translateY(-4px);
         }
 
-        .estado-tag {
+        .estado-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.15rem;
+        }
+
+        .estado-num {
+          font-family: var(--font-serif);
+          font-size: 1.1rem;
+          color: #b89768;
+        }
+
+        .estado-sub {
           font-size: 0.68rem;
           text-transform: uppercase;
           letter-spacing: 0.16em;
-          color: var(--color-accent);
-          font-weight: 700;
-          margin-bottom: 0.75rem;
+          color: rgba(246, 243, 236, 0.6);
         }
 
-        .estado-btn h3 {
+        .estado-card h3 {
           font-family: var(--font-serif);
-          font-size: 1.35rem;
+          font-size: 1.5rem;
           font-weight: 400;
-          color: var(--color-secondary);
-          margin-bottom: 0.6rem;
+          color: #f6f3ec;
+          margin-bottom: 0.65rem;
         }
 
-        .estado-btn p {
-          font-size: 0.9rem;
+        .estado-card p {
+          font-size: 0.92rem;
           font-weight: 300;
-          color: rgba(250, 250, 248, 0.72);
-          line-height: 1.6;
-          margin-bottom: 1.25rem;
+          color: rgba(246, 243, 236, 0.72);
+          line-height: 1.65;
+          margin-bottom: 1.5rem;
           flex: 1;
         }
 
-        .estado-cta {
-          font-size: 0.78rem;
+        .estado-action {
+          font-size: 0.75rem;
           text-transform: uppercase;
-          letter-spacing: 0.14em;
-          color: var(--color-accent);
-          font-weight: 500;
+          letter-spacing: 0.15em;
+          color: #b89768;
+          font-weight: 600;
         }
 
-        /* Timer Stage */
-        .timer-stage {
+        /* Breathing Stage */
+        .breathing-stage {
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          padding: 1rem 0;
+          padding: 1rem 0 0.5rem;
         }
 
-        .timer-ring-wrap {
+        .organic-orb-wrap {
           position: relative;
-          width: 160px;
-          height: 160px;
-          margin-bottom: 1.5rem;
+          width: 220px;
+          height: 220px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 1.75rem;
         }
 
-        .timer-svg {
-          display: block;
-        }
-
-        .timer-readout {
+        .orb-aura {
           position: absolute;
-          inset: 0;
+          width: 150px;
+          height: 150px;
+          border-radius: 9999px;
+          background: radial-gradient(circle, rgba(184, 151, 104, 0.38) 0%, rgba(184, 151, 104, 0.05) 70%);
+          animation: breathCycle 12s ease-in-out infinite;
+        }
+
+        .orb-core {
+          position: absolute;
+          width: 112px;
+          height: 112px;
+          border-radius: 9999px;
+          border: 1px solid rgba(184, 151, 104, 0.55);
+          background: rgba(246, 243, 236, 0.05);
+          animation: breathCycle 12s ease-in-out infinite;
+        }
+
+        .organic-orb-wrap.paused .orb-aura,
+        .organic-orb-wrap.paused .orb-core {
+          animation-play-state: paused;
+        }
+
+        @keyframes breathCycle {
+          0%,
+          100% {
+            transform: scale(0.86);
+            opacity: 0.75;
+          }
+          33% {
+            transform: scale(1.16);
+            opacity: 1;
+          }
+          66% {
+            transform: scale(1.16);
+            opacity: 0.95;
+          }
+        }
+
+        .orb-progress-svg {
+          position: relative;
+          z-index: 2;
+        }
+
+        .orb-readout {
+          position: absolute;
+          z-index: 3;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
         }
 
-        .timer-seconds {
+        .orb-time {
           font-family: var(--font-serif);
-          font-size: 2.2rem;
-          color: var(--color-secondary);
-          line-height: 1.1;
+          font-size: 2.5rem;
+          color: #f6f3ec;
+          line-height: 1;
         }
 
-        .timer-state-name {
-          font-size: 0.72rem;
+        .orb-state {
+          font-size: 0.7rem;
           text-transform: uppercase;
-          letter-spacing: 0.14em;
-          color: var(--color-accent);
-          margin-top: 0.25rem;
+          letter-spacing: 0.16em;
+          color: #b89768;
+          margin-top: 0.35rem;
         }
 
-        .breath-cue {
+        .poetic-breath {
           font-family: var(--font-serif);
-          font-size: 1.35rem;
-          color: var(--color-secondary);
+          font-style: italic;
+          font-size: 1.45rem;
+          color: #f6f3ec;
           margin-bottom: 0.45rem;
         }
 
-        .sound-mood-caption {
+        .mood-caption {
           font-size: 0.85rem;
-          color: rgba(250, 250, 248, 0.65);
+          color: rgba(246, 243, 236, 0.62);
           margin-bottom: 2rem;
         }
 
@@ -410,55 +502,101 @@ export default function SilencioEntreNotas() {
           justify-content: center;
         }
 
-        .btn-ghost-light {
+        .pill-btn-light {
           background: transparent;
-          border: 1px solid rgba(250, 250, 248, 0.3);
-          border-radius: var(--radius);
-          padding: 0.6rem 1.15rem;
-          color: var(--color-secondary);
+          border: 1px solid rgba(246, 243, 236, 0.32);
+          border-radius: 9999px;
+          padding: 0.65rem 1.35rem;
+          color: #f6f3ec;
           font-family: var(--font-main);
           font-size: 0.75rem;
           text-transform: uppercase;
           letter-spacing: 0.12em;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s ease;
         }
 
-        .btn-ghost-light:hover {
-          border-color: var(--color-accent);
-          color: var(--color-accent);
+        .pill-btn-light:hover {
+          border-color: #b89768;
+          color: #b89768;
         }
 
-        /* Reflection Stage */
-        .reflection-stage {
-          max-width: 680px;
+        .pill-btn-accent {
+          background-color: #b89768;
+          border: 1px solid #b89768;
+          border-radius: 9999px;
+          padding: 0.65rem 1.45rem;
+          color: #2c3a33;
+          font-family: var(--font-main);
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
+          cursor: pointer;
+          transition: transform 0.25s ease;
+        }
+
+        .pill-btn-accent:hover {
+          transform: translateY(-2px);
+        }
+
+        /* Receta Editorial */
+        .receta-editorial {
+          max-width: 700px;
           margin: 0 auto;
+          background-color: #f6f3ec;
+          color: #1d221f;
+          border: 1px solid #b89768;
+          border-radius: 16px;
+          padding: 2.5rem 2.25rem;
+          box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
           text-align: center;
         }
 
-        .reflection-badge {
-          display: inline-block;
+        .receta-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 1.75rem;
+        }
+
+        .receta-rx {
           font-size: 0.72rem;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.18em;
-          color: var(--color-accent);
-          font-weight: 700;
-          margin-bottom: 1.25rem;
+          color: #2c3a33;
         }
 
-        .reflection-question {
+        .receta-estado {
+          font-size: 0.72rem;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          padding: 0.25rem 0.8rem;
+          border-radius: 9999px;
+          background-color: rgba(184, 151, 104, 0.2);
+          color: #2c3a33;
+          font-weight: 600;
+        }
+
+        .receta-question {
           font-family: var(--font-serif);
-          font-size: clamp(1.3rem, 3vw, 1.75rem);
-          line-height: 1.45;
-          color: var(--color-secondary);
-          margin-bottom: 2.25rem;
+          font-style: italic;
+          font-size: clamp(1.3rem, 3vw, 1.7rem);
+          line-height: 1.5;
+          color: #1d221f;
+          margin-bottom: 1.75rem;
         }
 
-        .suggested-prep-box {
-          background-color: rgba(255, 255, 255, 0.06);
-          border: 1px solid rgba(197, 160, 89, 0.45);
-          border-radius: var(--radius);
-          padding: 1.5rem;
+        .receta-divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #b89768, transparent);
+          margin-bottom: 1.75rem;
+        }
+
+        .receta-footer {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -467,64 +605,74 @@ export default function SilencioEntreNotas() {
           margin-bottom: 1.5rem;
         }
 
-        .prep-kicker {
+        .receta-kicker {
           display: block;
-          font-size: 0.72rem;
+          font-size: 0.68rem;
           text-transform: uppercase;
-          letter-spacing: 0.14em;
-          color: var(--color-accent);
-          margin-bottom: 0.35rem;
+          letter-spacing: 0.16em;
+          color: #b89768;
+          font-weight: 700;
+          margin-bottom: 0.3rem;
         }
 
-        .suggested-prep-box h3 {
+        .receta-prep-info h3 {
           font-family: var(--font-serif);
-          font-size: 1.4rem;
-          color: var(--color-secondary);
+          font-size: 1.5rem;
+          color: #2c3a33;
           margin-bottom: 0.25rem;
         }
 
-        .prep-formula {
+        .receta-formula {
           font-size: 0.85rem;
-          color: rgba(250, 250, 248, 0.7);
+          color: #7a746e;
         }
 
-        .btn-accent-solid {
+        .receta-cta {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background-color: var(--color-accent);
-          color: var(--color-primary);
-          padding: 0.85rem 1.5rem;
-          border-radius: var(--radius);
-          font-size: 0.76rem;
-          font-weight: 700;
+          background-color: #2c3a33;
+          color: #f6f3ec;
+          padding: 0.9rem 1.6rem;
+          border-radius: 9999px;
+          font-size: 0.75rem;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.12em;
           white-space: nowrap;
+          transition: transform 0.25s ease;
         }
 
-        .reset-link {
+        .receta-cta:hover {
+          transform: translateY(-2px);
+        }
+
+        .receta-reset {
           background: none;
           border: none;
-          color: rgba(250, 250, 248, 0.7);
-          text-decoration: underline;
           font-family: var(--font-main);
-          font-size: 0.85rem;
+          font-size: 0.82rem;
+          color: #7a746e;
+          text-decoration: underline;
           cursor: pointer;
         }
 
         @media (max-width: 768px) {
-          .silencio-card {
-            padding: 2.25rem 1.25rem;
-          }
-
           .estados-grid {
             grid-template-columns: 1fr;
           }
 
-          .suggested-prep-box {
+          .receta-editorial {
+            padding: 2rem 1.35rem;
+          }
+
+          .receta-footer {
             flex-direction: column;
             align-items: flex-start;
+          }
+
+          .receta-cta {
+            width: 100%;
           }
         }
       `}</style>
